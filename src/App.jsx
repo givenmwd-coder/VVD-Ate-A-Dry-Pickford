@@ -552,20 +552,51 @@ export default function App() {
 
   // ── LEADERBOARD ───────────────────────────────────────────────
   if(view==="leaderboard"){
+    const ranked = Object.entries(allPlayers).map(([id,p],i)=>{
+      if(!p) return {id,name:id,pts:0,isMe:id===playerId};
+      let pts=0;
+      if(p.predictions){
+        Object.entries(p.predictions).forEach(([mid,pred])=>{
+          const a=results[mid]; if(!a||!pred) return;
+          let pt=calcPoints(pred,a);
+          const jk=p.jokerUsed;
+          if(jk){
+            const m=MATCHES_DATA.find(x=>String(x.id)===String(mid));
+            if(m){
+              const sl=getJokerSlot(m);
+              if(typeof jk==='object'?jk[sl]==mid:jk==mid) pt*=2;
+            }
+          }
+          pts+=pt;
+        });
+      }
+      return {id, name:p.name||id, pts, isMe:id===playerId};
+    }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
+
     return(
-      <div style={{minHeight:"100vh",background:"#0a1628",color:"#fff",padding:"20px",fontFamily:"sans-serif"}}>
-        <button onClick={()=>setView("predict")} style={{color:"#f1c40f",background:"none",border:"1px solid #f1c40f",padding:"8px 16px",borderRadius:6,cursor:"pointer",marginBottom:16}}>⬅ Back</button>
-        <h2 style={{color:"#f1c40f",marginBottom:16}}>🏅 LEADERBOARD</h2>
-        <p style={{color:"#aaa",fontSize:12}}>Firebase ready: {String(fbReady)}</p>
-        <p style={{color:"#aaa",fontSize:12}}>Player count: {Object.keys(allPlayers).length}</p>
-        <p style={{color:"#e67e22",fontSize:11,wordBreak:"break-all"}}>Raw: {JSON.stringify(allPlayers).substring(0,300)}</p>
-        <hr style={{borderColor:"rgba(255,255,255,0.1)",margin:"16px 0"}}/>
-        {Object.entries(allPlayers).map(([id,p],i)=>(
-          <div key={id} style={{padding:"12px",background:"rgba(255,255,255,0.05)",borderRadius:8,marginBottom:8}}>
-            <div style={{color:"#fff",fontWeight:"bold"}}>#{i+1} {p && p.name ? p.name : id}</div>
-            <div style={{color:"#7f8c9a",fontSize:11}}>{id} · {p && p.tz}</div>
+      <div style={s.root}><Bg/>
+      {toast&&<Toast t={toast}/>}
+      <div style={s.hdr}>
+        <div style={s.htitle}>🏅 LEADERBOARD</div>
+        <button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button>
+      </div>
+      <div style={{padding:"14px 14px 80px"}}>
+        <div style={s.lbsub}>{ranked.length} player{ranked.length!==1?"s":""} · {Object.keys(results).length} result{Object.keys(results).length!==1?"s":""} in · {fbReady?"🔴 Live":"🟡 Connecting..."}</div>
+        {ranked.length===0&&(
+          <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>
+            <div style={{fontSize:36,marginBottom:10}}>👥</div>
+            <div style={{fontSize:14,color:"#fff"}}>No players yet</div>
+            <div style={{fontSize:12,marginTop:5}}>Share the link with your friends!</div>
+          </div>
+        )}
+        {ranked.map(p=>(
+          <div key={p.id} style={{...s.lbcard,...(p.isMe?s.lbme:{})}}>
+            <div style={s.lbrank}>{p.rank===1?"🥇":p.rank===2?"🥈":p.rank===3?"🥉":`#${p.rank}`}</div>
+            <div style={s.lbname}>{p.name}{p.isMe?" (You)":""}</div>
+            <div style={s.lbpts}>{p.pts}<span style={s.lbptsl}> pts</span></div>
           </div>
         ))}
+      </div>
       </div>
     );
   }

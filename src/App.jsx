@@ -6,14 +6,14 @@ import { getDatabase, ref, set, update, onValue } from "firebase/database";
 const firebaseConfig = {
   apiKey: "AIzaSyCksLnzmDvqAc0gHvVQN9s5OlityjuhJR0",
   authDomain: "vvd-ate-a-dry-pickford.firebaseapp.com",
-  databaseURL: "https://vvd-ate-a-dry-pickford-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL: "https://vvd-ate-a-dry-pickford-9e45d-default-rtdb.firebaseio.com",
   projectId: "vvd-ate-a-dry-pickford",
   storageBucket: "vvd-ate-a-dry-pickford.firebasestorage.app",
   messagingSenderId: "324028384681",
   appId: "1:324028384681:web:e34299f1316b3b6ced70b8",
 };
 const fbApp = initializeApp(firebaseConfig);
-const db = getDatabase(fbApp, "https://vvd-ate-a-dry-pickford-default-rtdb.europe-west1.firebasedatabase.app");
+const db = getDatabase(fbApp);
 
 // ── MATCH DATA (UTC timestamps, source: official FIFA CET times) ─
 const MATCHES_DATA = [

@@ -449,7 +449,7 @@ export default function App() {
     cl:{background:"rgba(231,76,60,0.1)",border:"1px solid rgba(231,76,60,0.3)",borderRadius:6,padding:"7px 10px",color:"#e74c3c",fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit"},
   };
 
-  const MatchCard=({m,isToday})=>{
+  const MatchCard=({m,isToday,onTabChange})=>{
     const pred=localPreds[m.id]||preds[m.id]||{home:"",away:""};
     const actual=results[m.id];
     const pts=actual?calcPoints(pred,actual):null;
@@ -457,9 +457,23 @@ export default function App() {
     const isJ=joker&&joker[slot]==m.id;
     const slotUsed=joker&&joker[slot]!=null;
     const lk=locked(m);
+    const hasPred=pred.home!==""&&pred.away!=="";
+    const isSaved=hasPred&&preds[m.id]&&preds[m.id].home===pred.home&&preds[m.id].away===pred.away;
     // countdown handled by Countdown component below
     return(
       <div style={{...s.mc,...(isJ?s.jc:{}),...(lk?s.lc:{})}}>
+        {isToday&&!actual&&!lk&&(
+          <div
+            onClick={()=>onTabChange&&onTabChange(m.group||"KO")}
+            style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",borderRadius:7,marginBottom:9,cursor:"pointer",background:isSaved?"rgba(39,174,96,0.12)":"rgba(139,0,0,0.12)",border:isSaved?"1px solid rgba(39,174,96,0.5)":"1px solid rgba(139,0,0,0.5)"}}>
+            <span style={{fontSize:11,fontWeight:800,color:isSaved?"#27ae60":"#8b0000",letterSpacing:0.5}}>
+              {isSaved?"✅ Good to go 👍":"🔮 Make prediction"}
+            </span>
+            <span style={{fontSize:10,color:isSaved?"#27ae60":"#8b0000",fontWeight:600}}>
+              {m.home.split(" ").pop()} vs {m.away.split(" ").pop()} →
+            </span>
+          </div>
+        )}
         <div style={s.mm}>
           <span style={s.db}>⏱ {formatKickoff(m.utc,tz)}</span>
           <span style={{fontSize:9,color:"#4a5568"}}>📅 {getDateLabel(m.utc,tz)}</span>
@@ -569,7 +583,7 @@ export default function App() {
         {Object.entries(rounds).map(([round,rm])=>(
           <div key={round}>
             <div style={s.rh}>{isToday?`TODAY · ${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase()}`:round}</div>
-            {rm.map(m=><MatchCard key={m.id} m={m} isToday={isToday}/>)}
+            {rm.map(m=><MatchCard key={m.id} m={m} isToday={isToday} onTabChange={t=>{setTab(t);}}/>)}
           </div>
         ))}
       </div>

@@ -244,7 +244,9 @@ export default function App() {
   // Listen to all players + results from Firebase
   useEffect(()=>{
     const u1=onValue(ref(db,"players"),snap=>{
-      setAllPlayers(snap.val()||{});
+      const val=snap.val();
+      console.log("Firebase players raw:", JSON.stringify(val));
+      setAllPlayers(val||{});
       setFbReady(true);
     });
     const u2=onValue(ref(db,"results"),snap=>setResults(snap.val()||{}));
@@ -344,7 +346,9 @@ export default function App() {
     const entries=Object.entries(allPlayers);
     if(entries.length===0) return [];
     return entries.map(([id,player])=>{
-      if(!player) return {id,name:id,pts:0,isMe:id===playerId,rank:0};
+      if(!player || typeof player !== 'object') return {id,name:id,pts:0,isMe:id===playerId,rank:0};
+      // Handle nested structure - some Firebase data might be under player.data
+      const p = player.name ? player : (player.data || player);
       let pts=0;
       MATCHES_DATA.forEach(m=>{
         const a=results[m.id];if(!a)return;
@@ -355,7 +359,7 @@ export default function App() {
         if(typeof jk==='object'?jk[sl]==m.id:jk==m.id)pt*=2;
         pts+=pt;
       });
-      return{id,name:player.name||player.displayName||id,pts,isMe:id===playerId};
+      return{id,name:p.name||p.displayName||player.name||id,pts,isMe:id===playerId};
     }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
   };
 
@@ -563,7 +567,7 @@ export default function App() {
           {fbReady?"🔴 Live":"🟡 Connecting"} · {playerCount} registered · {board.length} on board
         </div>
         <div style={{fontSize:10,color:"#e67e22",marginBottom:12,wordBreak:"break-all"}}>
-          keys: {JSON.stringify(Object.keys(allPlayers))}
+          data: {JSON.stringify(allPlayers).substring(0,200)}
         </div>
         {board.length===0 && playerCount===0 && (
           <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>

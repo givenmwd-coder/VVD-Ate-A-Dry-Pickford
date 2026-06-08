@@ -233,6 +233,7 @@ export default function App() {
   // tick moved to Countdown component
   const [pin,setPin]=useState(""),  [auth,setAuth]=useState(false);
   const [adminSection,setAdminSection]=useState("results");
+  const [lbRound,setLbRound]=useState("all");
   const [ainputs,setAinputs]=useState({});
   const [saving,setSaving]=useState(false);
   const [fbReady,setFbReady]=useState(false);
@@ -593,6 +594,23 @@ export default function App() {
 
   // ── LEADERBOARD ───────────────────────────────────────────────
   if(view==="leaderboard"){
+    const ROUND_FILTERS=[
+      {key:"all",    label:"🏆 All Rounds"},
+      {key:"Round 1",       label:"Round 1"},
+      {key:"Round 2",       label:"Round 2"},
+      {key:"Round 3",       label:"Round 3"},
+      {key:"Round of 32",   label:"Round of 32"},
+      {key:"Round of 16",   label:"Round of 16"},
+      {key:"Quarter Final", label:"Quarter Finals"},
+      {key:"Semi Final",    label:"Semi Finals"},
+      {key:"3rd Place",     label:"3rd Place"},
+      {key:"🏆 Final",      label:"🏆 Final"},
+    ];
+
+    const filteredMatches = lbRound==="all"
+      ? MATCHES_DATA
+      : MATCHES_DATA.filter(m=>m.round===lbRound);
+
     let ranked=[];
     try{
       ranked=Object.entries(allPlayers).map(([id,p])=>{
@@ -601,12 +619,14 @@ export default function App() {
         if(p.predictions){
           Object.entries(p.predictions).forEach(([mid,pred])=>{
             try{
+              const m=filteredMatches.find(x=>String(x.id)===String(mid));
+              if(!m) return;
               const a=results[String(mid)]||results[Number(mid)];if(!a||!pred)return;
               let pt=calcPoints(pred,a);
               const jk=p.jokerUsed;
               if(jk){
-                const m=MATCHES_DATA.find(x=>String(x.id)===String(mid));
-                if(m){const sl=getJokerSlot(m);if(typeof jk==='object'?String(jk[sl])===String(mid):String(jk)===String(mid))pt*=2;}
+                const sl=getJokerSlot(m);
+                if(typeof jk==='object'?String(jk[sl])===String(mid):String(jk)===String(mid))pt*=2;
               }
               pts+=pt;
             }catch(e){}
@@ -616,6 +636,8 @@ export default function App() {
       }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
     }catch(e){console.error(e);}
 
+    const activeFilter=ROUND_FILTERS.find(f=>f.key===lbRound)||ROUND_FILTERS[0];
+
     return(
       <div style={{background:"#0a1628",minHeight:"100vh",fontFamily:"'Barlow Condensed',sans-serif",color:"#fff",position:"relative",overflow:"hidden"}}>
         <Bg/>
@@ -624,17 +646,27 @@ export default function App() {
           <div style={{fontSize:16,fontWeight:800,letterSpacing:3,color:"#f1c40f"}}>🏅 LEADERBOARD</div>
           <button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button>
         </div>
+
+        {/* Round filter dropdown */}
+        <div style={{padding:"10px 14px",borderBottom:"1px solid rgba(255,255,255,0.06)",position:"relative",zIndex:5}}>
+          <div style={{position:"relative",display:"inline-block",width:"100%"}}>
+            <select
+              value={lbRound}
+              onChange={e=>setLbRound(e.target.value)}
+              style={{width:"100%",padding:"10px 14px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(241,196,15,0.3)",borderRadius:8,color:"#f1c40f",fontSize:13,fontWeight:700,fontFamily:"inherit",cursor:"pointer",appearance:"none",WebkitAppearance:"none",outline:"none"}}>
+              {ROUND_FILTERS.map(f=>(
+                <option key={f.key} value={f.key} style={{background:"#0a1628",color:"#fff"}}>{f.label}</option>
+              ))}
+            </select>
+            <div style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",color:"#f1c40f",pointerEvents:"none",fontSize:12}}>▼</div>
+          </div>
+        </div>
+
         <div style={{padding:"14px 14px 80px",position:"relative",zIndex:1}}>
           <div style={{fontSize:12,color:"#7f8c9a",marginBottom:14}}>
-            {ranked.length} player{ranked.length!==1?"s":""} · {Object.keys(results).length} result{Object.keys(results).length!==1?"s":""} in · {fbReady?"🔴 Live":"🟡 Connecting..."}
+            {ranked.length} player{ranked.length!==1?"s":""} · {lbRound==="all"?Object.keys(results).length+" results":filteredMatches.filter(m=>results[m.id]).length+"/"+filteredMatches.length+" results"} in · {fbReady?"🔴 Live":"🟡 Connecting..."}
           </div>
-          {ranked.length===0&&(
-            <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>
-              <div style={{fontSize:36,marginBottom:10}}>👥</div>
-              <div style={{fontSize:14,color:"#fff"}}>No players yet</div>
-              <div style={{fontSize:12,marginTop:5}}>Share the link with your friends!</div>
-            </div>
-          )}
+          {ranked.length===0&&<div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}><div style={{fontSize:36,marginBottom:10}}>👥</div><div style={{color:"#fff",fontSize:14}}>No players yet</div></div>}
           {ranked.map(p=>(
             <div key={p.id} style={{background:p.isMe?"rgba(241,196,15,0.06)":"rgba(255,255,255,0.04)",border:p.isMe?"1px solid rgba(241,196,15,0.4)":"1px solid rgba(255,255,255,0.08)",borderRadius:11,padding:"13px 16px",display:"flex",alignItems:"center",gap:12,marginBottom:7}}>
               <div style={{fontSize:22,width:34,textAlign:"center"}}>{p.rank===1?"🥇":p.rank===2?"🥈":p.rank===3?"🥉":`#${p.rank}`}</div>

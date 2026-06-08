@@ -159,8 +159,7 @@ const calcPoints=(pred,actual)=>{
   if(isNaN(ph)||isNaN(pa))return 0;
   if(ph===ah&&pa===aa)return 5;
   const pr=ph>pa?"H":ph<pa?"A":"D",ar=ah>aa?"H":ah<aa?"A":"D";
-  if(pr===ar&&(ph-pa)===(ah-aa))return 3;
-  if(pr===ar)return 1;
+  if(pr===ar)return 3;
   return 0;
 };
 
@@ -524,7 +523,7 @@ export default function App() {
         )}
       </div>
       <p style={s.status}>{fbReady?"🟢 Connected to live server":"🟡 Connecting..."}</p>
-      <p style={s.hint}>Exact score = 5pts · Correct result = 1pt · Joker = 2× · 48 teams · 12 groups</p>
+      <p style={s.hint}>Exact score = 5pts · Correct result = 3pts · Joker = 2× · 48 teams · 12 groups</p>
     </div>
     {toast&&<Toast t={toast}/>}
     </div>

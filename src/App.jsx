@@ -221,18 +221,26 @@ export default function App() {
   const [tz,setTz]=useState(()=>localStorage.getItem("vvd_tz")||"UK");
   const [toast,setToast]=useState(null);
   const [now]=useState(Date.now());
-  const [tick,setTick]=useState(Date.now());
+  // tick moved to Countdown component
   const [pin,setPin]=useState(""),  [auth,setAuth]=useState(false);
   const [ainputs,setAinputs]=useState({});
   const [saving,setSaving]=useState(false);
   const [fbReady,setFbReady]=useState(false);
 
   // Tick every second for countdown
-  useEffect(()=>{const t=setInterval(()=>setTick(Date.now()),1000);return()=>clearInterval(t);},[]);
+  // countdown timer is in Countdown component
 
   // Listen to all players + results from Firebase
   useEffect(()=>{
-    const u1=onValue(ref(db,"players"),snap=>{ setAllPlayers(snap.val()||{}); setFbReady(true); });
+    const u1=onValue(ref(db,"players"),snap=>{
+      const val=snap.val()||{};
+      setAllPlayers(prev=>{
+        // Only update if something actually changed to prevent unnecessary re-renders
+        if(JSON.stringify(prev)===JSON.stringify(val)) return prev;
+        return val;
+      });
+      setFbReady(true);
+    });
     const u2=onValue(ref(db,"results"),snap=>setResults(snap.val()||{}));
     return()=>{u1();u2();};
   },[]);
@@ -242,7 +250,15 @@ export default function App() {
     if(!playerId)return;
     const u=onValue(ref(db,`players/${playerId}`),snap=>{
       const d=snap.val();
-      if(d){setPreds(d.predictions||{});setJoker(d.jokerUsed||null);}
+      if(d){
+        // Only sync joker from Firebase, not predictions (to avoid re-render while typing)
+        setJoker(d.jokerUsed||null);
+        // Only set preds on initial load (when localPreds is empty)
+        setPreds(prev=>{
+          if(Object.keys(prev).length===0) return d.predictions||{};
+          return prev;
+        });
+      }
     });
     return()=>u();
   },[playerId]);

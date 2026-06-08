@@ -340,8 +340,8 @@ export default function App() {
     mr:{display:"flex",alignItems:"center",gap:5},
     tn:{flex:1,fontSize:12,fontWeight:700,lineHeight:1.3,color:"#fff"},
     sb:{display:"flex",alignItems:"center",gap:3},
-    si:{width:38,height:38,textAlign:"center",fontSize:18,fontWeight:900,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"#f1c40f",outline:"none",fontFamily:"inherit"},
-    sl:{background:"rgba(255,255,255,0.03)",color:"#7f8c9a",cursor:"not-allowed"},
+    si:{width:48,height:48,textAlign:"center",fontSize:20,fontWeight:900,background:"rgba(255,255,255,0.08)",border:"2px solid rgba(255,255,255,0.2)",borderRadius:8,color:"#f1c40f",outline:"none",fontFamily:"inherit",WebkitAppearance:"none",appearance:"none"},
+    sl:{background:"rgba(255,255,255,0.03)",color:"#555",cursor:"not-allowed",opacity:0.5,border:"1px solid rgba(255,255,255,0.05)"},
     col:{fontSize:15,fontWeight:900,color:"#4a5568"},
     rr:{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:7,paddingTop:7,borderTop:"1px solid rgba(255,255,255,0.06)"},
     rt:{fontSize:10,color:"#7f8c9a"},
@@ -381,9 +381,9 @@ export default function App() {
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>
           <div style={s.sb}>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home} onChange={e=>!lk&&savePred(m.id,"home",e.target.value)} placeholder="–" maxLength={2} readOnly={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home} onChange={e=>savePred(m.id,"home",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
             <span style={s.col}>:</span>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away} onChange={e=>!lk&&savePred(m.id,"away",e.target.value)} placeholder="–" maxLength={2} readOnly={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away} onChange={e=>savePred(m.id,"away",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
           </div>
           <span style={{...s.tn,textAlign:"right"}}>{m.away}</span>
         </div>
@@ -529,9 +529,9 @@ export default function App() {
               <div style={s.mr}>
                 <span style={{...s.tn,fontSize:11}}>{m.home}</span>
                 <div style={s.sb}>
-                  <input style={s.si} value={inp.home} onChange={e=>setAinputs(a=>({...a,[m.id]:{...inp,home:e.target.value}}))} placeholder="–" maxLength={2}/>
+                  <input style={s.si} value={inp.home} onChange={e=>setAinputs(a=>({...a,[m.id]:{...inp,home:e.target.value}}))} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*"/>
                   <span style={s.col}>:</span>
-                  <input style={s.si} value={inp.away} onChange={e=>setAinputs(a=>({...a,[m.id]:{...inp,away:e.target.value}}))} placeholder="–" maxLength={2}/>
+                  <input style={s.si} value={inp.away} onChange={e=>setAinputs(a=>({...a,[m.id]:{...inp,away:e.target.value}}))} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*"/>
                 </div>
                 <span style={{...s.tn,textAlign:"right",fontSize:11}}>{m.away}</span>
               </div>

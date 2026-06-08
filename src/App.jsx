@@ -258,6 +258,7 @@ export default function App() {
   const locked=(m)=>m.utc<=now||!!results[m.id];
 
   const handleJoin=async()=>{
+    if(playerId) return setView("predict"); // already registered
     if(!name.trim())return toast2("Enter your name!","error");
     if(!fbReady)return toast2("Connecting...","error");
     const id=name.trim().toLowerCase().replace(/\s+/g,"_").replace(/[^a-z0-9_]/g,"");
@@ -445,12 +446,30 @@ export default function App() {
       <p style={s.sub}>A Scoreline Prediction Game</p>
       <p style={s.cred}>created by master g</p>
       <div style={s.card}>
-        <label style={s.lbl}>YOUR NAME</label>
-        <input style={s.inp} placeholder="Your name" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleJoin()}/>
-        <label style={s.lbl}>YOUR TIME ZONE</label>
-        <div style={s.tzrow}>{TZ.map(t=>(<button key={t.key} style={{...s.tzb,...(tz===t.key?s.tzba:{})}} onClick={()=>setTz(t.key)}>{t.label}</button>))}</div>
-        <button style={s.btn} onClick={handleJoin} disabled={saving}>{saving?"Joining...":"🔗 Join My Group"}</button>
-        {name.trim()&&playerId&&<button style={s.btn2} onClick={()=>{localStorage.clear();setName("");setPlayerId("");setPreds({});setJoker(null);toast2("Cleared");}}>🗑 Clear & Start Over</button>}
+        {playerId ? (
+          // Already registered — show locked name
+          <>
+            <div style={{textAlign:"center",padding:"8px 0"}}>
+              <div style={{fontSize:11,letterSpacing:3,color:"#7f8c9a",textTransform:"uppercase",marginBottom:6}}>REGISTERED AS</div>
+              <div style={{fontSize:26,fontWeight:900,color:"#f1c40f",letterSpacing:1}}>{name}</div>
+              <div style={{fontSize:10,color:"#27ae60",marginTop:4,letterSpacing:1}}>✅ Your name is locked to this device</div>
+            </div>
+            <label style={s.lbl}>YOUR TIME ZONE</label>
+            <div style={s.tzrow}>{TZ.map(t=>(<button key={t.key} style={{...s.tzb,...(tz===t.key?s.tzba:{})}} onClick={()=>setTz(t.key)}>{t.label}</button>))}</div>
+            <button style={s.btn} onClick={()=>{localStorage.setItem("vvd_tz",tz);setView("predict");toast2(`Welcome back, ${name}! 🎉`);}}>🔗 Enter My Group</button>
+            <button style={{...s.btn2,fontSize:11,opacity:0.6}} onClick={()=>{if(window.confirm("This will remove your name and all predictions from this device. Are you sure?")){{localStorage.clear();setName("");setPlayerId("");setPreds({});setLocalPreds({});setJoker(null);toast2("Cleared");}}}}>🗑 Remove this device registration</button>
+          </>
+        ) : (
+          // Not registered yet — show name input
+          <>
+            <label style={s.lbl}>CHOOSE YOUR NAME</label>
+            <input style={s.inp} placeholder="Your name" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleJoin()}/>
+            <div style={{fontSize:10,color:"#e67e22",letterSpacing:0.5}}>⚠️ Choose carefully — your name will be locked to this device once you join</div>
+            <label style={s.lbl}>YOUR TIME ZONE</label>
+            <div style={s.tzrow}>{TZ.map(t=>(<button key={t.key} style={{...s.tzb,...(tz===t.key?s.tzba:{})}} onClick={()=>setTz(t.key)}>{t.label}</button>))}</div>
+            <button style={s.btn} onClick={handleJoin} disabled={saving}>{saving?"Joining...":"🔗 Join My Group"}</button>
+          </>
+        )}
       </div>
       <p style={s.status}>{fbReady?"🟢 Connected to live server":"🟡 Connecting..."}</p>
       <p style={s.hint}>Exact score = 5pts · Correct result = 1pt · Joker = 2× · 48 teams · 12 groups</p>

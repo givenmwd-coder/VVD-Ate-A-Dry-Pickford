@@ -531,7 +531,7 @@ export default function App() {
           <button style={s.nb} onClick={()=>setView("admin")}>⚙️</button>
         </div>
       </div>
-      <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {joker?`Joker #${joker}`:"Joker ready"}</span></div>
+      <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {Object.values(joker||{}).filter(Boolean).length}/4 Jokers</span></div>
       <div style={s.tzbar}><span style={s.tzbl}>Times:</span>{TZ.map(t=>(<button key={t.key} style={{...s.tzm,...(tz===t.key?s.tzma:{})}} onClick={()=>setTz(t.key)}>{t.label}</button>))}</div>
       <div style={s.tabs}>
         <button style={{...s.tab,...(tab==="TODAY"?s.todaytab:{})}} onClick={()=>setTab("TODAY")}>📅 Today{todayMs.length>0?` (${todayMs.length})`:""}</button>
@@ -552,8 +552,27 @@ export default function App() {
 
   // ── LEADERBOARD ───────────────────────────────────────────────
   if(view==="leaderboard"){
-    const board=getBoard();
-    const playerCount=Object.keys(allPlayers).length;
+    // Build board directly - no helper function
+    const players = Object.entries(allPlayers);
+    const ranked = players.map(([id,player])=>{
+      const name = player && player.name ? player.name : id;
+      let pts = 0;
+      if(player && player.predictions){
+        Object.entries(player.predictions).forEach(([mid,pred])=>{
+          const a = results[mid];
+          if(!a || !pred) return;
+          let pt = calcPoints(pred, a);
+          const jk = player.jokerUsed;
+          if(jk && typeof jk==='object'){
+            const m = MATCHES_DATA.find(x=>x.id==mid);
+            if(m){ const sl=getJokerSlot(m); if(jk[sl]==mid) pt*=2; }
+          } else if(jk==mid){ pt*=2; }
+          pts+=pt;
+        });
+      }
+      return {id, name, pts, isMe: id===playerId};
+    }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
+
     return(
       <div style={s.root}><Bg/>
       {toast&&<Toast t={toast}/>}
@@ -561,26 +580,16 @@ export default function App() {
         <div style={s.htitle}>🏅 LEADERBOARD</div>
         <button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button>
       </div>
-      <div style={{padding:"14px",color:"#fff"}}>
-        <div style={{fontSize:12,color:"#7f8c9a",marginBottom:12}}>
-          {fbReady?"🔴 Live":"🟡 Connecting"} · {playerCount} registered · {board.length} on board
-        </div>
-        <div style={{fontSize:10,color:"#e67e22",marginBottom:12,wordBreak:"break-all"}}>
-          data: {JSON.stringify(allPlayers).substring(0,200)}
-        </div>
-        {board.length===0 && playerCount===0 && (
+      <div style={{padding:"14px 14px 80px"}}>
+        <div style={s.lbsub}>{ranked.length} player{ranked.length!==1?"s":""} · {Object.keys(results).length} result{Object.keys(results).length!==1?"s":""} in · {fbReady?"🔴 Live":"🟡 Connecting..."}</div>
+        {ranked.length===0&&(
           <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>
             <div style={{fontSize:36,marginBottom:10}}>👥</div>
             <div style={{fontSize:14,color:"#fff"}}>No players yet</div>
-            <div style={{fontSize:12,marginTop:5}}>Share the link with your friends!</div>
+            <div style={{fontSize:12,marginTop:5}}>Share the link!</div>
           </div>
         )}
-        {board.length===0 && playerCount>0 && (
-          <div style={{textAlign:"center",padding:"20px",color:"#e67e22",fontSize:12}}>
-            Players in Firebase but not rendering — check debug above
-          </div>
-        )}
-        {board.map(p=>(
+        {ranked.map(p=>(
           <div key={p.id} style={{...s.lbcard,...(p.isMe?s.lbme:{})}}>
             <div style={s.lbrank}>{p.rank===1?"🥇":p.rank===2?"🥈":p.rank===3?"🥉":`#${p.rank}`}</div>
             <div style={s.lbname}>{p.name}{p.isMe?" (You)":""}</div>

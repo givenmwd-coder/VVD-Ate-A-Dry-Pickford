@@ -234,6 +234,7 @@ export default function App() {
   // tick moved to Countdown component
   const [pin,setPin]=useState(""),  [auth,setAuth]=useState(false);
   const [adminSection,setAdminSection]=useState("results");
+  const [secretTap,setSecretTap]=useState(0);
   const [ainputs,setAinputs]=useState({});
   const [saving,setSaving]=useState(false);
   const [fbReady,setFbReady]=useState(false);
@@ -548,8 +549,8 @@ export default function App() {
         <div><div style={s.htitle}>VVD ATE A DRY PICKFORD ⚽</div><div style={s.hsub}>{name} · {TZ.find(t=>t.key===tz)?.label} · <span style={{color:"#e74c3c"}}>🔴 Live</span></div></div>
         <div style={{display:"flex",gap:5}}>
           <button style={s.nb} onClick={()=>setView("leaderboard")}>🏅 {getBoard().length}</button>
-          <button style={s.nb} onClick={()=>setView("home")}>👤</button>
-          <button style={s.nb} onClick={()=>setView("admin")}>⚙️</button>
+          <button style={s.nb} onClick={()=>setView("home")}>🏠</button>
+
         </div>
       </div>
       <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {Object.values(joker||{}).filter(Boolean).length}/4 Jokers</span></div>

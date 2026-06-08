@@ -13,7 +13,7 @@ const firebaseConfig = {
   appId: "1:324028384681:web:e34299f1316b3b6ced70b8",
 };
 const fbApp = initializeApp(firebaseConfig);
-const db = getDatabase(fbApp);
+const db = getDatabase(fbApp, "https://vvd-ate-a-dry-pickford-default-rtdb.europe-west1.firebasedatabase.app");
 
 // ── MATCH DATA (UTC timestamps, source: official FIFA CET times) ─
 const MATCHES_DATA = [

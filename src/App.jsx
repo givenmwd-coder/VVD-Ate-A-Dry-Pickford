@@ -266,8 +266,15 @@ export default function App() {
       const d=snap.val();
       if(d){
         setJoker(d.jokerUsed||{r1:null,r2:null,r3:null,ko:null});
-        setPreds(d.predictions||{});
-        setLocalPreds(d.predictions||{});
+        // Only load predictions on first load, not on every Firebase update
+        setPreds(prev=>{
+          if(Object.keys(prev).length===0) return d.predictions||{};
+          return prev;
+        });
+        setLocalPreds(prev=>{
+          if(Object.keys(prev).length===0) return d.predictions||{};
+          return prev;
+        });
       }
     });
     return()=>u();
@@ -459,12 +466,19 @@ export default function App() {
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>
           <div style={s.sb}>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home===undefined?"":pred.home} onChange={e=>handlePredChange(m.id,"home",e.target.value)} onBlur={()=>handlePredBlur(m.id)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" type="tel" disabled={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home===undefined?"":pred.home} onChange={e=>handlePredChange(m.id,"home",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" type="tel" disabled={lk}/>
             <span style={s.col}>:</span>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away===undefined?"":pred.away} onChange={e=>handlePredChange(m.id,"away",e.target.value)} onBlur={()=>handlePredBlur(m.id)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" type="tel" disabled={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away===undefined?"":pred.away} onChange={e=>handlePredChange(m.id,"away",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" type="tel" disabled={lk}/>
           </div>
           <span style={{...s.tn,textAlign:"right"}}>{m.away}</span>
         </div>
+        {!lk&&pred.home!==""&&pred.away!==""&&<div style={{marginTop:6}}>
+          <button
+            onMouseDown={e=>{e.preventDefault();handlePredBlur(m.id);toast2("✅ Prediction saved!");}}
+            style={{background:"linear-gradient(135deg,rgba(39,174,96,0.2),rgba(39,174,96,0.1))",border:"1px solid rgba(39,174,96,0.5)",borderRadius:7,padding:"6px 16px",color:"#27ae60",fontSize:11,fontWeight:800,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase",touchAction:"manipulation"}}>
+            💾 Save Prediction
+          </button>
+        </div>}
         {actual&&<div style={s.rr}><span style={s.rt}>Result: {actual.home}–{actual.away}</span><span style={{...s.pp,background:pts===5?"#27ae60":pts>=1?"#e67e22":"#c0392b"}}>{isJ?`🃏 ${pts*2}pts`:`${pts}pts`}</span></div>}
         {!lk&&<div style={s.ac}>{!slotUsed&&<button style={s.jb} onClick={()=>saveJoker(m)}>🃏 Play {JOKER_LABELS[slot]} Joker</button>}{isJ&&<div style={{display:'flex',alignItems:'center',gap:8}}><span style={s.ja}>🃏 JOKER ACTIVE — 2×</span><button style={{background:'rgba(231,76,60,0.12)',border:'1px solid rgba(231,76,60,0.4)',borderRadius:5,padding:'3px 9px',color:'#e74c3c',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}} onClick={()=>removeJoker(m)}>✕ Remove</button></div>}{slotUsed&&!isJ&&<span style={{fontSize:9,color:'#4a5568',letterSpacing:1}}>🃏 {JOKER_LABELS[slot]} joker already used on another match</span>}</div>}
       </div>

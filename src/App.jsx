@@ -346,20 +346,19 @@ export default function App() {
     const entries=Object.entries(allPlayers);
     if(entries.length===0) return [];
     return entries.map(([id,player])=>{
-      if(!player || typeof player !== 'object') return {id,name:id,pts:0,isMe:id===playerId,rank:0};
-      // Handle nested structure - some Firebase data might be under player.data
-      const p = player.name ? player : (player.data || player);
+      if(!player||typeof player!=='object') return{id,name:id,pts:0,isMe:id===playerId,rank:0};
       let pts=0;
-      MATCHES_DATA.forEach(m=>{
-        const a=results[m.id];if(!a)return;
-        const p=player.predictions?.[m.id];if(!p)return;
-        let pt=calcPoints(p,a);
-        const jk=player.jokerUsed||{};
-        const sl=getJokerSlot(m);
-        if(typeof jk==='object'?jk[sl]==m.id:jk==m.id)pt*=2;
-        pts+=pt;
-      });
-      return{id,name:p.name||p.displayName||player.name||id,pts,isMe:id===playerId};
+      try{
+        MATCHES_DATA.forEach(m=>{
+          const a=results[m.id];if(!a)return;
+          const pred=player.predictions?.[m.id];if(!pred)return;
+          let pt=calcPoints(pred,a);
+          const jk=player.jokerUsed;
+          if(jk){const sl=getJokerSlot(m);if(typeof jk==='object'?jk[sl]==m.id:jk==m.id)pt*=2;}
+          pts+=pt;
+        });
+      }catch(e){console.error("getBoard error",id,e);}
+      return{id,name:player.name||id,pts,isMe:id===playerId};
     }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
   };
 

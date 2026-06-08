@@ -209,7 +209,7 @@ const Bg=()=>(
 const Toast=({t})=>(<div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",padding:"12px 24px",borderRadius:30,color:"#fff",fontWeight:700,fontSize:14,zIndex:999,whiteSpace:"nowrap",boxShadow:"0 4px 20px rgba(0,0,0,0.4)",background:t.type==="error"?"#e74c3c":"#27ae60"}}>{t.msg}</div>);
 
 export default function App() {
-  const [view,setView]=useState("home");
+  const [view,setView]=useState(()=>localStorage.getItem("vvd_pid")?"predict":"home");
   const [name,setName]=useState(()=>localStorage.getItem("vvd_name")||"");
   const [playerId,setPlayerId]=useState(()=>localStorage.getItem("vvd_pid")||"");
   const [preds,setPreds]=useState({});
@@ -223,6 +223,7 @@ export default function App() {
   const [now]=useState(Date.now());
   // tick moved to Countdown component
   const [pin,setPin]=useState(""),  [auth,setAuth]=useState(false);
+  const [adminSection,setAdminSection]=useState("results");
   const [ainputs,setAinputs]=useState({});
   const [saving,setSaving]=useState(false);
   const [fbReady,setFbReady]=useState(false);
@@ -330,7 +331,7 @@ export default function App() {
       const p=player.predictions?.[m.id];if(!p)return;
       let pt=calcPoints(p,a);if(player.jokerUsed==m.id)pt*=2;pts+=pt;
     });
-    return{id,name:player.name,pts,isMe:id===playerId};
+    return{id,name:player.name||player.displayName||id,pts,isMe:id===playerId};
   }).sort((a,b)=>b.pts-a.pts).map((p,i)=>({...p,rank:i+1}));
 
   const s={
@@ -575,7 +576,37 @@ export default function App() {
     return(
       <div style={s.root}><Bg/>
       {toast&&<Toast t={toast}/>}
-      <div style={s.hdr}><div style={s.htitle}>⚙️ ENTER RESULTS</div><button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button></div>
+      <div style={s.hdr}><div style={s.htitle}>⚙️ ADMIN</div><button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button></div>
+
+      {/* Admin sub-tabs */}
+      <div style={{display:"flex",borderBottom:"2px solid rgba(241,196,15,0.3)",background:"rgba(10,22,40,0.8)"}}>
+        <button style={{flex:1,padding:"11px",background:"none",border:"none",color:adminSection==="results"?"#f1c40f":"#7f8c9a",fontWeight:700,fontSize:12,cursor:"pointer",fontFamily:"inherit",borderBottom:adminSection==="results"?"3px solid #f1c40f":"none",textTransform:"uppercase",letterSpacing:1}} onClick={()=>setAdminSection("results")}>📋 Results</button>
+        <button style={{flex:1,padding:"11px",background:"none",border:"none",color:adminSection==="players"?"#e74c3c":"#7f8c9a",fontWeight:700,fontSize:12,cursor:"pointer",fontFamily:"inherit",borderBottom:adminSection==="players"?"3px solid #e74c3c":"none",textTransform:"uppercase",letterSpacing:1}} onClick={()=>setAdminSection("players")}>👥 Players</button>
+      </div>
+
+      {adminSection==="players"&&(
+        <div style={{padding:"12px 12px 80px"}}>
+          <div style={{fontSize:10,color:"#7f8c9a",letterSpacing:2,textTransform:"uppercase",marginBottom:12}}>Registered Players — tap to delete</div>
+          {Object.entries(allPlayers).map(([id,player])=>(
+            <div key={id} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:10,padding:"12px 14px",marginBottom:8,display:"flex",alignItems:"center",gap:12}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:16,fontWeight:700,color:"#fff"}}>{player.name||id}</div>
+                <div style={{fontSize:10,color:"#7f8c9a",marginTop:2}}>{id} · {player.tz||"?"}</div>
+              </div>
+              <button style={{background:"rgba(231,76,60,0.12)",border:"1px solid rgba(231,76,60,0.4)",borderRadius:7,padding:"7px 12px",color:"#e74c3c",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}
+                onClick={async()=>{
+                  if(window.confirm(`Delete ${player.name||id}? This removes all their predictions.`)){
+                    await set(ref(db,`players/${id}`),null);
+                    toast2(`${player.name||id} removed`);
+                  }
+                }}>🗑 Delete</button>
+            </div>
+          ))}
+          {Object.keys(allPlayers).length===0&&<div style={{textAlign:"center",color:"#7f8c9a",padding:"30px"}}>No players registered yet</div>}
+        </div>
+      )}
+
+      {adminSection==="results"&&<>
       <div style={s.tabs}>{[...GROUPS,"KO"].map(t=>(<button key={t} style={{...s.tab,...(atab===t?s.taba:{})}} onClick={()=>setAtab(t)}>{t==="KO"?"⚡KO":`Grp ${t}`}</button>))}</div>
       <div style={s.ml}>{Object.entries(rounds).map(([round,rm])=>(
         <div key={round}><div style={s.rh}>{round}</div>

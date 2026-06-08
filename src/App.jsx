@@ -233,12 +233,7 @@ export default function App() {
   // Listen to all players + results from Firebase
   useEffect(()=>{
     const u1=onValue(ref(db,"players"),snap=>{
-      const val=snap.val()||{};
-      setAllPlayers(prev=>{
-        // Only update if something actually changed to prevent unnecessary re-renders
-        if(JSON.stringify(prev)===JSON.stringify(val)) return prev;
-        return val;
-      });
+      setAllPlayers(snap.val()||{});
       setFbReady(true);
     });
     const u2=onValue(ref(db,"results"),snap=>setResults(snap.val()||{}));
@@ -251,13 +246,9 @@ export default function App() {
     const u=onValue(ref(db,`players/${playerId}`),snap=>{
       const d=snap.val();
       if(d){
-        // Only sync joker from Firebase, not predictions (to avoid re-render while typing)
         setJoker(d.jokerUsed||null);
-        // Only set preds on initial load (when localPreds is empty)
-        setPreds(prev=>{
-          if(Object.keys(prev).length===0) return d.predictions||{};
-          return prev;
-        });
+        setPreds(d.predictions||{});
+        setLocalPreds(d.predictions||{});
       }
     });
     return()=>u();

@@ -554,16 +554,29 @@ export default function App() {
     return(
       <div style={s.root}><Bg/>
       {toast&&<Toast t={toast}/>}
-      <div style={s.hdr}><div style={s.htitle}>🏅 LEADERBOARD</div><button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button></div>
-      <div style={s.lbwrap}>
-        <div style={s.lbsub}>{playerCount} player{playerCount!==1?"s":""} · {Object.keys(results).length} result{Object.keys(results).length!==1?"s":""} in · {fbReady?"🔴 Live":"🟡 Connecting..."}</div>
-        {/* DEBUG - remove later */}
-        <div style={{fontSize:10,color:"#e67e22",padding:"8px",background:"rgba(255,255,255,0.05)",borderRadius:6,marginBottom:8,wordBreak:"break-all"}}>
-          DB: {JSON.stringify(Object.keys(allPlayers))} · board: {board.length} · ready: {String(fbReady)}
+      <div style={s.hdr}>
+        <div style={s.htitle}>🏅 LEADERBOARD</div>
+        <button style={s.nb} onClick={()=>setView("predict")}>⬅ Back</button>
+      </div>
+      <div style={{padding:"14px",color:"#fff"}}>
+        <div style={{fontSize:12,color:"#7f8c9a",marginBottom:12}}>
+          {fbReady?"🔴 Live":"🟡 Connecting"} · {playerCount} registered · {board.length} on board
         </div>
-        {!fbReady&&(<div style={{textAlign:"center",padding:"30px",color:"#7f8c9a"}}><div style={{fontSize:24,marginBottom:8}}>⏳</div><div>Connecting to server...</div></div>)}
-        {fbReady&&playerCount===0&&(<div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}><div style={{fontSize:36,marginBottom:10}}>👥</div><div style={{fontSize:14,color:"#fff"}}>No players yet</div><div style={{fontSize:12,marginTop:5}}>Share the link with your friends!</div></div>)}
-        {fbReady&&playerCount>0&&board.length===0&&(<div style={{textAlign:"center",padding:"30px",color:"#e67e22"}}><div style={{fontSize:12}}>Players found in database but board is empty — check console</div></div>)}
+        <div style={{fontSize:10,color:"#e67e22",marginBottom:12,wordBreak:"break-all"}}>
+          keys: {JSON.stringify(Object.keys(allPlayers))}
+        </div>
+        {board.length===0 && playerCount===0 && (
+          <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>
+            <div style={{fontSize:36,marginBottom:10}}>👥</div>
+            <div style={{fontSize:14,color:"#fff"}}>No players yet</div>
+            <div style={{fontSize:12,marginTop:5}}>Share the link with your friends!</div>
+          </div>
+        )}
+        {board.length===0 && playerCount>0 && (
+          <div style={{textAlign:"center",padding:"20px",color:"#e67e22",fontSize:12}}>
+            Players in Firebase but not rendering — check debug above
+          </div>
+        )}
         {board.map(p=>(
           <div key={p.id} style={{...s.lbcard,...(p.isMe?s.lbme:{})}}>
             <div style={s.lbrank}>{p.rank===1?"🥇":p.rank===2?"🥈":p.rank===3?"🥉":`#${p.rank}`}</div>
@@ -576,8 +589,7 @@ export default function App() {
     );
   }
 
-  // ── ADMIN ─────────────────────────────────────────────────────
-  if(view==="admin"){
+    if(view==="admin"){
     if(!auth) return(
       <div style={s.root}><Bg/>
       <div style={{...s.wrap,paddingTop:60}}>

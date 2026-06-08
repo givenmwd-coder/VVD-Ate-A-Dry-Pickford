@@ -136,7 +136,7 @@ const TZ_LABELS = {ET:"ET",UK:"BST",DE:"CEST",SA:"SAST"};
 
 function formatKickoff(utcMs, tzKey) {
   const zone = TZ_ZONES[tzKey]||"America/New_York";
-  const time = new Intl.DateTimeFormat("en-GB",{timeZone:zone,hour:"2-digit",minute:"2-digit",hour12:true}).format(new Date(utcMs)).toUpperCase();
+  const time = new Intl.DateTimeFormat("en-GB",{timeZone:zone,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(utcMs));
   return `${time} ${TZ_LABELS[tzKey]}`;
 }
 

@@ -255,10 +255,27 @@ export default function App() {
     toast2(`Welcome${existing?"back":""}, ${name.trim()}! 🎉`);
   };
 
-  const savePred=async(matchId,side,val)=>{
+  // localPreds mirrors preds but updates instantly without Firebase re-renders
+  const [localPreds,setLocalPreds]=useState({});
+
+  // Sync localPreds when Firebase updates preds (only on initial load)
+  useEffect(()=>{
+    setLocalPreds(prev=>{
+      // Only update fields that aren't currently being edited
+      return {...preds,...prev};
+    });
+  },[preds]);
+
+  const handlePredChange=(matchId,side,val)=>{
     if(!/^\d*$/.test(val)||parseInt(val)>20)return;
-    const newPred={...preds[matchId],[side]:val};
-    const updated={...preds,[matchId]:newPred};
+    const newPred={...localPreds[matchId],[side]:val};
+    setLocalPreds(p=>({...p,[matchId]:newPred}));
+  };
+
+  const handlePredBlur=async(matchId)=>{
+    const pred=localPreds[matchId];
+    if(!pred)return;
+    const updated={...preds,[matchId]:pred};
     setPreds(updated);
     if(playerId) await update(ref(db,`players/${playerId}`),{predictions:updated});
   };
@@ -362,7 +379,7 @@ export default function App() {
   };
 
   const MatchCard=({m,isToday})=>{
-    const pred=preds[m.id]||{home:"",away:""};
+    const pred=localPreds[m.id]||preds[m.id]||{home:"",away:""};
     const actual=results[m.id];
     const pts=actual?calcPoints(pred,actual):null;
     const isJ=joker==m.id;
@@ -381,9 +398,9 @@ export default function App() {
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>
           <div style={s.sb}>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home} onChange={e=>savePred(m.id,"home",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.home} onChange={e=>handlePredChange(m.id,"home",e.target.value)} onBlur={()=>handlePredBlur(m.id)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
             <span style={s.col}>:</span>
-            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away} onChange={e=>savePred(m.id,"away",e.target.value)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
+            <input style={{...s.si,...(lk?s.sl:{})}} value={pred.away} onChange={e=>handlePredChange(m.id,"away",e.target.value)} onBlur={()=>handlePredBlur(m.id)} placeholder="–" maxLength={2} inputMode="numeric" pattern="[0-9]*" disabled={lk}/>
           </div>
           <span style={{...s.tn,textAlign:"right"}}>{m.away}</span>
         </div>

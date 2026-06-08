@@ -3,30 +3,17 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, update, onValue } from "firebase/database";
 
 // ── FIREBASE CONFIG ──────────────────────────────────────────
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCksLnzmDvqAc0gHvVQN9s5OlityjuhJR0",
-    authDomain: "vvd-ate-a-dry-pickford.firebaseapp.com",
-    databaseURL: "https://vvd-ate-a-dry-pickford-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "vvd-ate-a-dry-pickford",
-    storageBucket: "vvd-ate-a-dry-pickford.firebasestorage.app",
-    messagingSenderId: "324028384681",
-    appId: "1:324028384681:web:e34299f1316b3b6ced70b8",
-    measurementId: "G-1EC96MFJG4"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCksLnzmDvqAc0gHvVQN9s5OlityjuhJR0",
+  authDomain: "vvd-ate-a-dry-pickford.firebaseapp.com",
+  databaseURL: "https://vvd-ate-a-dry-pickford-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "vvd-ate-a-dry-pickford",
+  storageBucket: "vvd-ate-a-dry-pickford.firebasestorage.app",
+  messagingSenderId: "324028384681",
+  appId: "1:324028384681:web:e34299f1316b3b6ced70b8",
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
 
 // ── MATCH DATA (UTC timestamps, source: official FIFA CET times) ─
 const MATCHES_DATA = [
@@ -43,10 +30,10 @@ const MATCHES_DATA = [
   { id:11, group:"B", home:"🇨🇭 Switzerland",    away:"🇨🇦 Canada",         utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" },
   { id:12, group:"B", home:"🇧🇦 Bosnia-Herz.",   away:"🇶🇦 Qatar",          utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" },
   { id:13, group:"C", home:"🇧🇷 Brazil",         away:"🇲🇦 Morocco",        utc:Date.UTC(2026,5,13,23,0),  round:"Round 1" },
-  { id:14, group:"C", home:"🇭🇹 Haiti",           away:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} Scotland", utc:Date.UTC(2026,5,14,1,0),   round:"Round 1" },
-  { id:15, group:"C", home:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} Scotland", away:"🇲🇦 Morocco",  utc:Date.UTC(2026,5,19,22,0),  round:"Round 2" },
+  { id:14, group:"C", home:"🇭🇹 Haiti",           away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", utc:Date.UTC(2026,5,14,1,0),   round:"Round 1" },
+  { id:15, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", away:"🇲🇦 Morocco",  utc:Date.UTC(2026,5,19,22,0),  round:"Round 2" },
   { id:16, group:"C", home:"🇧🇷 Brazil",         away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,20,2,0),   round:"Round 2" },
-  { id:17, group:"C", home:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} Scotland", away:"🇧🇷 Brazil",   utc:Date.UTC(2026,5,24,23,0),  round:"Round 3" },
+  { id:17, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", away:"🇧🇷 Brazil",   utc:Date.UTC(2026,5,24,23,0),  round:"Round 3" },
   { id:18, group:"C", home:"🇲🇦 Morocco",        away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,24,23,0),  round:"Round 3" },
   { id:19, group:"D", home:"🇺🇸 USA",            away:"🇵🇾 Paraguay",       utc:Date.UTC(2026,5,12,22,0),  round:"Round 1" },
   { id:20, group:"D", home:"🇦🇺 Australia",      away:"🇹🇷 Türkiye",         utc:Date.UTC(2026,5,13,4,0),   round:"Round 1" },
@@ -96,11 +83,11 @@ const MATCHES_DATA = [
   { id:64, group:"K", home:"🇨🇴 Colombia",       away:"🇨🇩 Congo DR",        utc:Date.UTC(2026,5,24,2,0),   round:"Round 2" },
   { id:65, group:"K", home:"🇨🇴 Colombia",       away:"🇵🇹 Portugal",        utc:Date.UTC(2026,5,28,0,30),  round:"Round 3" },
   { id:66, group:"K", home:"🇨🇩 Congo DR",       away:"🇺🇿 Uzbekistan",      utc:Date.UTC(2026,5,28,0,30),  round:"Round 3" },
-  { id:67, group:"L", home:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F} England", away:"🇭🇷 Croatia",  utc:Date.UTC(2026,5,17,21,0),  round:"Round 1" },
+  { id:67, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", away:"🇭🇷 Croatia",  utc:Date.UTC(2026,5,17,21,0),  round:"Round 1" },
   { id:68, group:"L", home:"🇬🇭 Ghana",          away:"🇵🇦 Panama",          utc:Date.UTC(2026,5,17,23,0),  round:"Round 1" },
-  { id:69, group:"L", home:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F} England", away:"🇬🇭 Ghana",    utc:Date.UTC(2026,5,23,21,0),  round:"Round 2" },
+  { id:69, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", away:"🇬🇭 Ghana",    utc:Date.UTC(2026,5,23,21,0),  round:"Round 2" },
   { id:70, group:"L", home:"🇵🇦 Panama",         away:"🇭🇷 Croatia",         utc:Date.UTC(2026,5,23,23,0),  round:"Round 2" },
-  { id:71, group:"L", home:"🇵🇦 Panama",         away:"🏴\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F} England", utc:Date.UTC(2026,5,27,22,0), round:"Round 3" },
+  { id:71, group:"L", home:"🇵🇦 Panama",         away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", utc:Date.UTC(2026,5,27,22,0), round:"Round 3" },
   { id:72, group:"L", home:"🇭🇷 Croatia",        away:"🇬🇭 Ghana",           utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" },
   // ROUND OF 32 (28 Jun - 4 Jul)
   { id:73,  group:null, home:"2nd A", away:"2nd B",          utc:Date.UTC(2026,5,28,19,0),  round:"Round of 32" },
@@ -499,7 +486,7 @@ export default function App() {
   if(view==="admin"){
     if(!auth) return(
       <div style={s.root}><Bg/>
-      <div style={s.wrap} style={{paddingTop:60}}>
+      <div style={{...s.wrap,paddingTop:60}}>
         <div style={{fontSize:44,marginBottom:14}}>🔐</div>
         <h2 style={{...s.title,fontSize:20,marginBottom:20}}>ADMIN <span style={s.acc}>PANEL</span></h2>
         <div style={{...s.card,maxWidth:320}}>

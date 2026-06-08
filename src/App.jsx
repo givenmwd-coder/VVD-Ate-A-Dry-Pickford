@@ -249,7 +249,13 @@ export default function App() {
       setAllPlayers(val||{});
       setFbReady(true);
     });
-    const u2=onValue(ref(db,"results"),snap=>setResults(snap.val()||{}));
+    const u2=onValue(ref(db,"results"),snap=>{
+      const raw=snap.val()||{};
+      // Normalize keys to both string and number for safe lookup
+      const normalized={};
+      Object.entries(raw).forEach(([k,v])=>{normalized[k]=v;normalized[Number(k)]=v;});
+      setResults(normalized);
+    });
     return()=>{u1();u2();};
   },[]);
 
@@ -560,12 +566,12 @@ export default function App() {
         if(p.predictions){
           Object.entries(p.predictions).forEach(([mid,pred])=>{
             try{
-              const a=results[mid];if(!a||!pred)return;
+              const a=results[String(mid)]||results[Number(mid)];if(!a||!pred)return;
               let pt=calcPoints(pred,a);
               const jk=p.jokerUsed;
               if(jk){
                 const m=MATCHES_DATA.find(x=>String(x.id)===String(mid));
-                if(m){const sl=getJokerSlot(m);if(typeof jk==='object'?jk[sl]==mid:jk==mid)pt*=2;}
+                if(m){const sl=getJokerSlot(m);if(typeof jk==='object'?String(jk[sl])===String(mid):String(jk)===String(mid))pt*=2;}
               }
               pts+=pt;
             }catch(e){}

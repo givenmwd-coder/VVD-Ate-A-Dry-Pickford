@@ -462,6 +462,7 @@ export default function App() {
           {!lk&&<Countdown utc={m.utc} style={s.cd}/>}
           {lk&&!actual&&<span style={s.ko}>🔒 Started</span>}
           {actual&&<span style={s.fb}>✅ Final</span>}
+          {!actual&&pred.home!==""&&pred.away!==""&&preds[m.id]&&preds[m.id].home===pred.home&&preds[m.id].away===pred.away&&<span style={{fontSize:9,fontWeight:700,background:"rgba(39,174,96,0.15)",color:"#27ae60",padding:"2px 6px",borderRadius:4}}>✅ Saved</span>}
         </div>
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>

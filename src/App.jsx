@@ -582,6 +582,9 @@ export default function App() {
       </div>
       <div style={{padding:"14px 14px 80px"}}>
         <div style={s.lbsub}>{ranked.length} player{ranked.length!==1?"s":""} · {Object.keys(results).length} result{Object.keys(results).length!==1?"s":""} in · {fbReady?"🔴 Live":"🟡 Connecting..."}</div>
+        <pre style={{fontSize:9,color:"#e67e22",wordBreak:"break-all",whiteSpace:"pre-wrap",marginBottom:8}}>
+          {JSON.stringify(allPlayers,null,1).substring(0,500)}
+        </pre>
         {ranked.length===0&&(
           <div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}>
             <div style={{fontSize:36,marginBottom:10}}>👥</div>

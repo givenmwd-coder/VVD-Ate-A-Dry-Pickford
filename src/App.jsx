@@ -288,7 +288,13 @@ export default function App() {
     if(!fbReady)return toast2("Connecting...","error");
     const id=name.trim().toLowerCase().replace(/\s+/g,"_").replace(/[^a-z0-9_]/g,"");
     if(!id)return toast2("Name has invalid characters","error");
-    // Check if name already taken by someone else
+    // Check if name already taken (case-insensitive)
+    const nameLower=name.trim().toLowerCase();
+    const nameTaken=Object.values(allPlayers).some(p=>p&&p.name&&p.name.toLowerCase()===nameLower);
+    if(nameTaken && !allPlayers[id]){
+      return toast2("That name is already taken — try a different one","error");
+    }
+    // Check if ID already taken by someone else
     const existing=allPlayers[id];
     if(existing && existing.name!==name.trim()){
       return toast2("Name taken — try a different one","error");

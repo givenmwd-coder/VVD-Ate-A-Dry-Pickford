@@ -675,8 +675,17 @@ export default function App() {
         </div>
 
         <div style={{padding:"14px 14px 80px",position:"relative",zIndex:1}}>
-          <div style={{fontSize:12,color:"#7f8c9a",marginBottom:14}}>
-            {ranked.length} player{ranked.length!==1?"s":""} · {lbRound==="all"?Object.keys(results).length+" results":filteredMatches.filter(m=>results[m.id]).length+"/"+filteredMatches.length+" results"} in · {fbReady?"● Live":"● Connecting..."}
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:14,gap:6}}>
+            <div style={{display:"flex",justifyContent:"center"}}>
+              <span style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 16px",borderRadius:20,background:fbReady?"rgba(231,76,60,0.12)":"rgba(241,196,15,0.1)",border:fbReady?"1px solid rgba(231,76,60,0.4)":"1px solid rgba(241,196,15,0.3)"}}>
+                <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}`}</style>
+                <span style={{width:8,height:8,borderRadius:"50%",background:fbReady?"#e74c3c":"#f1c40f",display:"inline-block",animation:"blink 1.2s infinite"}}/>
+                <span style={{fontSize:11,fontWeight:800,color:fbReady?"#e74c3c":"#f1c40f",letterSpacing:2}}>{fbReady?"LIVE":"CONNECTING..."}</span>
+              </span>
+            </div>
+            <div style={{fontSize:12,color:"#7f8c9a",textAlign:"center"}}>
+              {ranked.length} player{ranked.length!==1?"s":""} · {lbRound==="all"?Object.keys(results).length+" results":filteredMatches.filter(m=>results[m.id]).length+"/"+filteredMatches.length+" results"} in
+            </div>
           </div>
           {ranked.length===0&&<div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}><div style={{fontSize:36,marginBottom:10}}>👥</div><div style={{color:"#fff",fontSize:14}}>No players yet</div></div>}
           {ranked.map(p=>(

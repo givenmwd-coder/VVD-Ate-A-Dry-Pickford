@@ -475,14 +475,16 @@ export default function App() {
             </span>
           </div>
         )}
-        <div style={s.mm}>
-          <span style={s.db}>⏱ {formatKickoff(m.utc,tz)}</span>
-          <span style={{fontSize:9,color:"#4a5568"}}>📅 {getDateLabel(m.utc,tz)}</span>
-          {isToday&&m.group&&<span style={s.gb}>Grp {m.group}</span>}
-          {!lk&&<Countdown utc={m.utc} style={s.cd}/>}
-          {lk&&!actual&&<span style={s.ko}>🔒 Started</span>}
-          {actual&&<span style={s.fb}>✅ Final</span>}
-          {!actual&&pred.home!==""&&pred.away!==""&&preds[m.id]&&preds[m.id].home===pred.home&&preds[m.id].away===pred.away&&<span style={{fontSize:9,fontWeight:700,background:"rgba(39,174,96,0.15)",color:"#27ae60",padding:"2px 6px",borderRadius:4}}>✅ Saved</span>}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:7,flexWrap:"nowrap",gap:4}}>
+          <div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap",flex:1}}>
+            <span style={s.db}>⏱ {formatKickoff(m.utc,tz)}</span>
+            <span style={{fontSize:10,color:"#cc44ff",fontWeight:700}}>📅 {getDateLabel(m.utc,tz)}</span>
+            {isToday&&m.group&&<span style={s.gb}>Grp {m.group}</span>}
+            {lk&&!actual&&<span style={s.ko}>🔒 Started</span>}
+            {actual&&<span style={s.fb}>✅ Final</span>}
+          </div>
+          {!lk&&<Countdown utc={m.utc} style={{...s.cd,marginLeft:"auto",flexShrink:0}}/>}
+        </div>
         </div>
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>
@@ -493,12 +495,15 @@ export default function App() {
           </div>
           <span style={{...s.tn,textAlign:"right"}}>{m.away}</span>
         </div>
-        {!lk&&pred.home!==""&&pred.away!==""&&<div style={{marginTop:6}}>
+        {!lk&&pred.home!==""&&pred.away!==""&&<div style={{marginTop:6,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <button
             onMouseDown={e=>{e.preventDefault();handlePredBlur(m.id);toast2("✅ Prediction saved!");}}
             style={{background:"linear-gradient(135deg,rgba(39,174,96,0.2),rgba(39,174,96,0.1))",border:"1px solid rgba(39,174,96,0.5)",borderRadius:7,padding:"6px 16px",color:"#27ae60",fontSize:11,fontWeight:800,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase",touchAction:"manipulation"}}>
             💾 Save Prediction
           </button>
+          {preds[m.id]&&preds[m.id].home===pred.home&&preds[m.id].away===pred.away&&(
+            <span style={{fontSize:10,fontWeight:800,background:"rgba(39,174,96,0.15)",color:"#27ae60",padding:"3px 9px",borderRadius:20,border:"1px solid rgba(39,174,96,0.3)"}}>✅ Saved</span>
+          )}
         </div>}
         {actual&&<div style={s.rr}><span style={s.rt}>Result: {actual.home}–{actual.away}</span><span style={{...s.pp,background:pts===5?"#27ae60":pts>=1?"#e67e22":"#c0392b"}}>{isJ?`🃏 ${pts*2}pts`:`${pts}pts`}</span></div>}
         {!lk&&<div style={s.ac}>{!slotUsed&&<button style={s.jb} onClick={()=>saveJoker(m)}>🃏 Play {JOKER_LABELS[slot]} Joker</button>}{isJ&&<div style={{display:'flex',alignItems:'center',gap:8}}><span style={s.ja}>🃏 JOKER ACTIVE — 2×</span><button style={{background:'rgba(231,76,60,0.12)',border:'1px solid rgba(231,76,60,0.4)',borderRadius:5,padding:'3px 9px',color:'#e74c3c',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}} onClick={()=>removeJoker(m)}>✕ Remove</button></div>}{slotUsed&&!isJ&&<span style={{fontSize:9,color:'#4a5568',letterSpacing:1}}>🃏 {JOKER_LABELS[slot]} joker already used on another match</span>}</div>}

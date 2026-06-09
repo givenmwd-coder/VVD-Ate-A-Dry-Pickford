@@ -193,6 +193,14 @@ const Countdown=({utc,style})=>{
 };
 
 
+const LiveDot=()=>(
+  <span style={{display:"inline-flex",alignItems:"center",gap:5}}>
+    <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}`}</style>
+    <span style={{width:7,height:7,borderRadius:"50%",background:"#e74c3c",display:"inline-block",animation:"blink 1.2s infinite"}}/>
+    <span style={{fontSize:10,fontWeight:700,color:"#e74c3c",letterSpacing:1}}>LIVE</span>
+  </span>
+);
+
 const Bg=()=>(
   <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none",background:"#0a1628"}}>
     <div style={{position:"absolute",inset:0,backgroundImage:`radial-gradient(circle at 20% 20%, rgba(241,196,15,0.07) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(52,152,219,0.07) 0%, transparent 50%)`}}/>
@@ -569,7 +577,7 @@ export default function App() {
       <div style={s.root}><Bg/>
       {toast&&<Toast t={toast}/>}
       <div style={s.hdr}>
-        <div><div style={s.htitle}>VVD ATE A DRY PICKFORD ⚽</div><div style={s.hsub}>{name} · {TZ.find(t=>t.key===tz)?.label} · <span style={{color:"#e74c3c"}}>🔴 Live</span></div></div>
+        <div><div style={s.htitle}>VVD ATE A DRY PICKFORD ⚽</div><div style={s.hsub}>{name} · {TZ.find(t=>t.key===tz)?.label} · <LiveDot/></div></div>
         <div style={{display:"flex",gap:5}}>
           <button style={s.nb} onClick={()=>setView("leaderboard")}>🏅 {getBoard().length}</button>
           <button style={s.nb} onClick={()=>setView("home")}>🏠</button>
@@ -668,7 +676,7 @@ export default function App() {
 
         <div style={{padding:"14px 14px 80px",position:"relative",zIndex:1}}>
           <div style={{fontSize:12,color:"#7f8c9a",marginBottom:14}}>
-            {ranked.length} player{ranked.length!==1?"s":""} · {lbRound==="all"?Object.keys(results).length+" results":filteredMatches.filter(m=>results[m.id]).length+"/"+filteredMatches.length+" results"} in · {fbReady?"🔴 Live":"🟡 Connecting..."}
+            {ranked.length} player{ranked.length!==1?"s":""} · {lbRound==="all"?Object.keys(results).length+" results":filteredMatches.filter(m=>results[m.id]).length+"/"+filteredMatches.length+" results"} in · {fbReady?"● Live":"● Connecting..."}
           </div>
           {ranked.length===0&&<div style={{textAlign:"center",padding:"40px",color:"#7f8c9a"}}><div style={{fontSize:36,marginBottom:10}}>👥</div><div style={{color:"#fff",fontSize:14}}>No players yet</div></div>}
           {ranked.map(p=>(

@@ -485,7 +485,6 @@ export default function App() {
           </div>
           {!lk&&<Countdown utc={m.utc} style={{...s.cd,marginLeft:"auto",flexShrink:0}}/>}
         </div>
-        </div>
         <div style={s.mr}>
           <span style={s.tn}>{m.home}</span>
           <div style={s.sb}>

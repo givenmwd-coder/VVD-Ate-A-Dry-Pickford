@@ -194,10 +194,10 @@ const Countdown=({utc,style})=>{
 
 
 const LiveDot=()=>(
-  <span style={{display:"inline-flex",alignItems:"center",gap:5}}>
-    <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}`}</style>
+  <span style={{display:"inline-flex",alignItems:"center",gap:5,padding:"3px 10px",borderRadius:20,background:"rgba(231,76,60,0.12)",border:"1px solid rgba(231,76,60,0.4)"}}>
+    <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}`}</style>
     <span style={{width:7,height:7,borderRadius:"50%",background:"#e74c3c",display:"inline-block",animation:"blink 1.2s infinite"}}/>
-    <span style={{fontSize:10,fontWeight:700,color:"#e74c3c",letterSpacing:1}}>LIVE</span>
+    <span style={{fontSize:10,fontWeight:800,color:"#e74c3c",letterSpacing:1}}>LIVE</span>
   </span>
 );
 
@@ -578,11 +578,11 @@ export default function App() {
       {toast&&<Toast t={toast}/>}
       <div style={s.hdr}>
         <div><div style={s.htitle}>VVD ATE A DRY PICKFORD ⚽</div><div style={s.hsub}>{name} · {TZ.find(t=>t.key===tz)?.label}</div></div>
-        <div style={{display:"flex",gap:5}}>
+        <div style={{display:"flex",gap:5,alignItems:"center"}}>
+          <LiveDot/>
           <button style={s.nb} onClick={()=>setView("leaderboard")}>🏅 {getBoard().length}</button>
           <button style={s.nb} onClick={()=>setView("home")}>🏠</button>
           <button style={s.nb} onClick={()=>setView("admin")}>⚙️</button>
-
         </div>
       </div>
       <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {Object.values(joker||{}).filter(Boolean).length}/4 Jokers</span></div>

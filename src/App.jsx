@@ -591,13 +591,6 @@ export default function App() {
         <button style={{...s.tab,...(tab==="TODAY"?s.todaytab:{})}} onClick={()=>setTab("TODAY")}>📅 Today{todayMs.length>0?` (${todayMs.length})`:""}</button>
         {[...GROUPS,"KO"].map(t=>(<button key={t} style={{...s.tab,...(tab===t?s.taba:{})}} onClick={()=>setTab(t)}>{t==="KO"?"⚡KO":`Grp ${t}`}</button>))}
       </div>
-      <div style={{display:"flex",justifyContent:"center",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.06)",background:"rgba(10,22,40,0.5)"}}>
-        <span style={{display:"inline-flex",alignItems:"center",gap:6,padding:"3px 14px",borderRadius:20,background:"rgba(231,76,60,0.12)",border:"1px solid rgba(231,76,60,0.4)"}}>
-          <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}`}</style>
-          <span style={{width:7,height:7,borderRadius:"50%",background:"#e74c3c",display:"inline-block",animation:"blink 1.2s infinite"}}/>
-          <span style={{fontSize:10,fontWeight:800,color:"#e74c3c",letterSpacing:2}}>LIVE</span>
-        </span>
-      </div>
       <div style={s.ml}>
         {isToday&&todayMs.length===0&&(<div style={{textAlign:"center",padding:"40px 20px",color:"#7f8c9a"}}><div style={{fontSize:36,marginBottom:10}}>📭</div><div style={{fontSize:15,fontWeight:700,color:"#fff",marginBottom:5}}>No matches today</div><div style={{fontSize:12}}>Check the group tabs for upcoming fixtures</div></div>)}
         {Object.entries(rounds).map(([round,rm])=>(

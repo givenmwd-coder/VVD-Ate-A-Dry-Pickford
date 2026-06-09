@@ -16,117 +16,130 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getDatabase(fbApp, "https://vvd-ate-a-dry-pickford-9e45d-default-rtdb.firebaseio.com");
 
 // ── MATCH DATA (UTC timestamps, source: official FIFA CET times) ─
+// UTC timestamps from official FIFA ET times (ET = UTC-4)
 const MATCHES_DATA = [
-  { id:1,  group:"A", home:"🇲🇽 Mexico",        away:"🇿🇦 South Africa",  utc:Date.UTC(2026,5,11,20,0),  round:"Round 1" },
-  { id:2,  group:"A", home:"🇰🇷 South Korea",    away:"🇨🇿 Czechia",        utc:Date.UTC(2026,5,12,2,0),   round:"Round 1" },
-  { id:3,  group:"A", home:"🇨🇿 Czechia",        away:"🇿🇦 South Africa",  utc:Date.UTC(2026,5,18,16,0),  round:"Round 2" },
-  { id:4,  group:"A", home:"🇲🇽 Mexico",         away:"🇰🇷 South Korea",   utc:Date.UTC(2026,5,19,6,0),   round:"Round 2" },
-  { id:5,  group:"A", home:"🇨🇿 Czechia",        away:"🇲🇽 Mexico",         utc:Date.UTC(2026,5,25,2,0),   round:"Round 3" },
-  { id:6,  group:"A", home:"🇿🇦 South Africa",  away:"🇰🇷 South Korea",   utc:Date.UTC(2026,5,25,2,0),   round:"Round 3" },
-  { id:7,  group:"B", home:"🇨🇦 Canada",         away:"🇧🇦 Bosnia-Herz.",  utc:Date.UTC(2026,5,12,19,0),  round:"Round 1" },
-  { id:8,  group:"B", home:"🇶🇦 Qatar",           away:"🇨🇭 Switzerland",   utc:Date.UTC(2026,5,13,19,0),  round:"Round 1" },
-  { id:9,  group:"B", home:"🇨🇭 Switzerland",    away:"🇧🇦 Bosnia-Herz.",  utc:Date.UTC(2026,5,18,19,0),  round:"Round 2" },
-  { id:10, group:"B", home:"🇨🇦 Canada",         away:"🇶🇦 Qatar",          utc:Date.UTC(2026,5,18,22,0),  round:"Round 2" },
-  { id:11, group:"B", home:"🇨🇭 Switzerland",    away:"🇨🇦 Canada",         utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" },
-  { id:12, group:"B", home:"🇧🇦 Bosnia-Herz.",   away:"🇶🇦 Qatar",          utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" },
-  { id:13, group:"C", home:"🇧🇷 Brazil",         away:"🇲🇦 Morocco",        utc:Date.UTC(2026,5,13,23,0),  round:"Round 1" },
-  { id:14, group:"C", home:"🇭🇹 Haiti",           away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", utc:Date.UTC(2026,5,14,1,0),   round:"Round 1" },
-  { id:15, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", away:"🇲🇦 Morocco",  utc:Date.UTC(2026,5,19,22,0),  round:"Round 2" },
-  { id:16, group:"C", home:"🇧🇷 Brazil",         away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,20,2,0),   round:"Round 2" },
-  { id:17, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", away:"🇧🇷 Brazil",   utc:Date.UTC(2026,5,24,23,0),  round:"Round 3" },
-  { id:18, group:"C", home:"🇲🇦 Morocco",        away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,24,23,0),  round:"Round 3" },
-  { id:19, group:"D", home:"🇺🇸 USA",            away:"🇵🇾 Paraguay",       utc:Date.UTC(2026,5,12,22,0),  round:"Round 1" },
-  { id:20, group:"D", home:"🇦🇺 Australia",      away:"🇹🇷 Türkiye",         utc:Date.UTC(2026,5,13,4,0),   round:"Round 1" },
-  { id:21, group:"D", home:"🇺🇸 USA",            away:"🇦🇺 Australia",      utc:Date.UTC(2026,5,19,19,0),  round:"Round 2" },
-  { id:22, group:"D", home:"🇹🇷 Türkiye",         away:"🇵🇾 Paraguay",       utc:Date.UTC(2026,5,20,3,0),   round:"Round 2" },
-  { id:23, group:"D", home:"🇹🇷 Türkiye",         away:"🇺🇸 USA",            utc:Date.UTC(2026,5,26,2,0),   round:"Round 3" },
-  { id:24, group:"D", home:"🇵🇾 Paraguay",       away:"🇦🇺 Australia",      utc:Date.UTC(2026,5,26,2,0),   round:"Round 3" },
-  { id:25, group:"E", home:"🇩🇪 Germany",        away:"🇨🇼 Curaçao",         utc:Date.UTC(2026,5,14,18,0),  round:"Round 1" },
-  { id:26, group:"E", home:"🇨🇮 Côte d'Ivoire", away:"🇪🇨 Ecuador",         utc:Date.UTC(2026,5,14,23,0),  round:"Round 1" },
-  { id:27, group:"E", home:"🇩🇪 Germany",        away:"🇨🇮 Côte d'Ivoire",  utc:Date.UTC(2026,5,20,20,0),  round:"Round 2" },
-  { id:28, group:"E", home:"🇪🇨 Ecuador",        away:"🇨🇼 Curaçao",         utc:Date.UTC(2026,5,21,0,0),   round:"Round 2" },
-  { id:29, group:"E", home:"🇪🇨 Ecuador",        away:"🇩🇪 Germany",         utc:Date.UTC(2026,5,25,20,0),  round:"Round 3" },
-  { id:30, group:"E", home:"🇨🇼 Curaçao",        away:"🇨🇮 Côte d'Ivoire",  utc:Date.UTC(2026,5,25,20,0),  round:"Round 3" },
-  { id:31, group:"F", home:"🇳🇱 Netherlands",   away:"🇯🇵 Japan",           utc:Date.UTC(2026,5,14,21,0),  round:"Round 1" },
-  { id:32, group:"F", home:"🇸🇪 Sweden",         away:"🇹🇳 Tunisia",         utc:Date.UTC(2026,5,15,1,0),   round:"Round 1" },
-  { id:33, group:"F", home:"🇹🇳 Tunisia",        away:"🇯🇵 Japan",           utc:Date.UTC(2026,5,20,4,0),   round:"Round 2" },
-  { id:34, group:"F", home:"🇳🇱 Netherlands",   away:"🇸🇪 Sweden",          utc:Date.UTC(2026,5,20,18,0),  round:"Round 2" },
-  { id:35, group:"F", home:"🇯🇵 Japan",          away:"🇸🇪 Sweden",          utc:Date.UTC(2026,5,25,23,0),  round:"Round 3" },
-  { id:36, group:"F", home:"🇹🇳 Tunisia",        away:"🇳🇱 Netherlands",    utc:Date.UTC(2026,5,25,23,0),  round:"Round 3" },
-  { id:37, group:"G", home:"🇧🇪 Belgium",        away:"🇪🇬 Egypt",           utc:Date.UTC(2026,5,15,20,0),  round:"Round 1" },
-  { id:38, group:"G", home:"🇮🇷 IR Iran",        away:"🇳🇿 New Zealand",    utc:Date.UTC(2026,5,16,1,0),   round:"Round 1" },
-  { id:39, group:"G", home:"🇧🇪 Belgium",        away:"🇮🇷 IR Iran",         utc:Date.UTC(2026,5,21,19,0),  round:"Round 2" },
-  { id:40, group:"G", home:"🇳🇿 New Zealand",   away:"🇪🇬 Egypt",           utc:Date.UTC(2026,5,22,1,0),   round:"Round 2" },
-  { id:41, group:"G", home:"🇪🇬 Egypt",          away:"🇮🇷 IR Iran",         utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" },
-  { id:42, group:"G", home:"🇳🇿 New Zealand",   away:"🇧🇪 Belgium",         utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" },
-  { id:43, group:"H", home:"🇪🇸 Spain",          away:"🇨🇻 Cabo Verde",      utc:Date.UTC(2026,5,15,17,0),  round:"Round 1" },
-  { id:44, group:"H", home:"🇸🇦 Saudi Arabia",  away:"🇺🇾 Uruguay",         utc:Date.UTC(2026,5,15,23,0),  round:"Round 1" },
-  { id:45, group:"H", home:"🇪🇸 Spain",          away:"🇸🇦 Saudi Arabia",   utc:Date.UTC(2026,5,21,17,0),  round:"Round 2" },
-  { id:46, group:"H", home:"🇺🇾 Uruguay",        away:"🇨🇻 Cabo Verde",      utc:Date.UTC(2026,5,21,23,0),  round:"Round 2" },
-  { id:47, group:"H", home:"🇨🇻 Cabo Verde",     away:"🇸🇦 Saudi Arabia",   utc:Date.UTC(2026,5,27,1,0),   round:"Round 3" },
-  { id:48, group:"H", home:"🇺🇾 Uruguay",        away:"🇪🇸 Spain",           utc:Date.UTC(2026,5,27,1,0),   round:"Round 3" },
-  { id:49, group:"I", home:"🇫🇷 France",         away:"🇸🇳 Senegal",         utc:Date.UTC(2026,5,16,20,0),  round:"Round 1" },
-  { id:50, group:"I", home:"🇮🇶 Iraq",           away:"🇳🇴 Norway",          utc:Date.UTC(2026,5,16,23,0),  round:"Round 1" },
-  { id:51, group:"I", home:"🇫🇷 France",         away:"🇮🇶 Iraq",            utc:Date.UTC(2026,5,22,22,0),  round:"Round 2" },
-  { id:52, group:"I", home:"🇳🇴 Norway",         away:"🇸🇳 Senegal",         utc:Date.UTC(2026,5,23,0,0),   round:"Round 2" },
-  { id:53, group:"I", home:"🇳🇴 Norway",         away:"🇫🇷 France",          utc:Date.UTC(2026,5,26,20,0),  round:"Round 3" },
-  { id:54, group:"I", home:"🇸🇳 Senegal",        away:"🇮🇶 Iraq",            utc:Date.UTC(2026,5,26,20,0),  round:"Round 3" },
-  { id:55, group:"J", home:"🇦🇹 Austria",        away:"🇯🇴 Jordan",          utc:Date.UTC(2026,5,16,4,0),   round:"Round 1" },
-  { id:56, group:"J", home:"🇦🇷 Argentina",      away:"🇩🇿 Algeria",         utc:Date.UTC(2026,5,17,2,0),   round:"Round 1" },
-  { id:57, group:"J", home:"🇦🇷 Argentina",      away:"🇦🇹 Austria",         utc:Date.UTC(2026,5,22,18,0),  round:"Round 2" },
-  { id:58, group:"J", home:"🇯🇴 Jordan",         away:"🇩🇿 Algeria",         utc:Date.UTC(2026,5,23,3,0),   round:"Round 2" },
-  { id:59, group:"J", home:"🇩🇿 Algeria",        away:"🇦🇹 Austria",         utc:Date.UTC(2026,5,28,3,0),   round:"Round 3" },
-  { id:60, group:"J", home:"🇯🇴 Jordan",         away:"🇦🇷 Argentina",       utc:Date.UTC(2026,5,28,3,0),   round:"Round 3" },
-  { id:61, group:"K", home:"🇵🇹 Portugal",       away:"🇨🇩 Congo DR",        utc:Date.UTC(2026,5,17,18,0),  round:"Round 1" },
-  { id:62, group:"K", home:"🇺🇿 Uzbekistan",     away:"🇨🇴 Colombia",        utc:Date.UTC(2026,5,18,2,0),   round:"Round 1" },
-  { id:63, group:"K", home:"🇵🇹 Portugal",       away:"🇺🇿 Uzbekistan",      utc:Date.UTC(2026,5,23,18,0),  round:"Round 2" },
-  { id:64, group:"K", home:"🇨🇴 Colombia",       away:"🇨🇩 Congo DR",        utc:Date.UTC(2026,5,24,2,0),   round:"Round 2" },
-  { id:65, group:"K", home:"🇨🇴 Colombia",       away:"🇵🇹 Portugal",        utc:Date.UTC(2026,5,28,0,30),  round:"Round 3" },
-  { id:66, group:"K", home:"🇨🇩 Congo DR",       away:"🇺🇿 Uzbekistan",      utc:Date.UTC(2026,5,28,0,30),  round:"Round 3" },
-  { id:67, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", away:"🇭🇷 Croatia",  utc:Date.UTC(2026,5,17,21,0),  round:"Round 1" },
-  { id:68, group:"L", home:"🇬🇭 Ghana",          away:"🇵🇦 Panama",          utc:Date.UTC(2026,5,17,23,0),  round:"Round 1" },
-  { id:69, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", away:"🇬🇭 Ghana",    utc:Date.UTC(2026,5,23,21,0),  round:"Round 2" },
-  { id:70, group:"L", home:"🇵🇦 Panama",         away:"🇭🇷 Croatia",         utc:Date.UTC(2026,5,23,23,0),  round:"Round 2" },
-  { id:71, group:"L", home:"🇵🇦 Panama",         away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", utc:Date.UTC(2026,5,27,22,0), round:"Round 3" },
-  { id:72, group:"L", home:"🇭🇷 Croatia",        away:"🇬🇭 Ghana",           utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" },
+  // GROUP A
+  { id:1,  group:"A", home:"🇲🇽 Mexico",        away:"🇿🇦 South Africa",  utc:Date.UTC(2026,5,11,19,0),  round:"Round 1" }, // 3pm ET
+  { id:2,  group:"A", home:"🇰🇷 South Korea",    away:"🇨🇿 Czechia",        utc:Date.UTC(2026,5,12,2,0),   round:"Round 1" }, // 10pm ET Jun 11
+  { id:3,  group:"A", home:"🇨🇿 Czechia",        away:"🇿🇦 South Africa",  utc:Date.UTC(2026,5,18,16,0),  round:"Round 2" }, // 12pm ET
+  { id:4,  group:"A", home:"🇲🇽 Mexico",         away:"🇰🇷 South Korea",   utc:Date.UTC(2026,5,19,1,0),   round:"Round 2" }, // 9pm ET Jun 18
+  { id:5,  group:"A", home:"🇨🇿 Czechia",        away:"🇲🇽 Mexico",         utc:Date.UTC(2026,5,25,1,0),   round:"Round 3" }, // 9pm ET Jun 24
+  { id:6,  group:"A", home:"🇿🇦 South Africa",  away:"🇰🇷 South Korea",   utc:Date.UTC(2026,5,25,1,0),   round:"Round 3" }, // 9pm ET Jun 24
+  // GROUP B
+  { id:7,  group:"B", home:"🇨🇦 Canada",         away:"🇧🇦 Bosnia-Herz.",  utc:Date.UTC(2026,5,12,19,0),  round:"Round 1" }, // 3pm ET
+  { id:8,  group:"B", home:"🇶🇦 Qatar",           away:"🇨🇭 Switzerland",   utc:Date.UTC(2026,5,13,19,0),  round:"Round 1" }, // 3pm ET
+  { id:9,  group:"B", home:"🇨🇭 Switzerland",    away:"🇧🇦 Bosnia-Herz.",  utc:Date.UTC(2026,5,18,19,0),  round:"Round 2" }, // 3pm ET
+  { id:10, group:"B", home:"🇨🇦 Canada",         away:"🇶🇦 Qatar",          utc:Date.UTC(2026,5,18,22,0),  round:"Round 2" }, // 6pm ET
+  { id:11, group:"B", home:"🇨🇭 Switzerland",    away:"🇨🇦 Canada",         utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" }, // 3pm ET
+  { id:12, group:"B", home:"🇧🇦 Bosnia-Herz.",   away:"🇶🇦 Qatar",          utc:Date.UTC(2026,5,24,19,0),  round:"Round 3" }, // 3pm ET
+  // GROUP C
+  { id:13, group:"C", home:"🇧🇷 Brazil",         away:"🇲🇦 Morocco",        utc:Date.UTC(2026,5,13,22,0),  round:"Round 1" }, // 6pm ET
+  { id:14, group:"C", home:"🇭🇹 Haiti",           away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland",     utc:Date.UTC(2026,5,14,1,0),   round:"Round 1" }, // 9pm ET Jun 13
+  { id:15, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland",     away:"🇲🇦 Morocco",        utc:Date.UTC(2026,5,19,22,0),  round:"Round 2" }, // 6pm ET
+  { id:16, group:"C", home:"🇧🇷 Brazil",         away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,20,0,30),  round:"Round 2" }, // 8:30pm ET Jun 19
+  { id:17, group:"C", home:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland",     away:"🇧🇷 Brazil",         utc:Date.UTC(2026,5,24,22,0),  round:"Round 3" }, // 6pm ET
+  { id:18, group:"C", home:"🇲🇦 Morocco",        away:"🇭🇹 Haiti",          utc:Date.UTC(2026,5,24,22,0),  round:"Round 3" }, // 6pm ET
+  // GROUP D
+  { id:19, group:"D", home:"🇺🇸 USA",            away:"🇵🇾 Paraguay",       utc:Date.UTC(2026,5,13,1,0),   round:"Round 1" }, // 9pm ET Jun 12
+  { id:20, group:"D", home:"🇦🇺 Australia",      away:"🇹🇷 Türkiye",         utc:Date.UTC(2026,5,14,4,0),   round:"Round 1" }, // 12am ET Jun 14
+  { id:21, group:"D", home:"🇺🇸 USA",            away:"🇦🇺 Australia",      utc:Date.UTC(2026,5,19,19,0),  round:"Round 2" }, // 3pm ET
+  { id:22, group:"D", home:"🇹🇷 Türkiye",         away:"🇵🇾 Paraguay",       utc:Date.UTC(2026,5,20,3,0),   round:"Round 2" }, // 11pm ET Jun 19
+  { id:23, group:"D", home:"🇹🇷 Türkiye",         away:"🇺🇸 USA",            utc:Date.UTC(2026,5,26,2,0),   round:"Round 3" }, // 10pm ET Jun 25
+  { id:24, group:"D", home:"🇵🇾 Paraguay",       away:"🇦🇺 Australia",      utc:Date.UTC(2026,5,26,2,0),   round:"Round 3" }, // 10pm ET Jun 25
+  // GROUP E
+  { id:25, group:"E", home:"🇩🇪 Germany",        away:"🇨🇼 Curaçao",         utc:Date.UTC(2026,5,14,17,0),  round:"Round 1" }, // 1pm ET
+  { id:26, group:"E", home:"🇨🇮 Côte d'Ivoire", away:"🇪🇨 Ecuador",         utc:Date.UTC(2026,5,14,23,0),  round:"Round 1" }, // 7pm ET
+  { id:27, group:"E", home:"🇩🇪 Germany",        away:"🇨🇮 Côte d'Ivoire",  utc:Date.UTC(2026,5,20,20,0),  round:"Round 2" }, // 4pm ET
+  { id:28, group:"E", home:"🇪🇨 Ecuador",        away:"🇨🇼 Curaçao",         utc:Date.UTC(2026,5,21,0,0),   round:"Round 2" }, // 8pm ET Jun 20
+  { id:29, group:"E", home:"🇪🇨 Ecuador",        away:"🇩🇪 Germany",         utc:Date.UTC(2026,5,25,20,0),  round:"Round 3" }, // 4pm ET
+  { id:30, group:"E", home:"🇨🇼 Curaçao",        away:"🇨🇮 Côte d'Ivoire",  utc:Date.UTC(2026,5,25,20,0),  round:"Round 3" }, // 4pm ET
+  // GROUP F
+  { id:31, group:"F", home:"🇳🇱 Netherlands",   away:"🇯🇵 Japan",           utc:Date.UTC(2026,5,14,20,0),  round:"Round 1" }, // 4pm ET
+  { id:32, group:"F", home:"🇸🇪 Sweden",         away:"🇹🇳 Tunisia",         utc:Date.UTC(2026,5,15,2,0),   round:"Round 1" }, // 10pm ET Jun 14
+  { id:33, group:"F", home:"🇹🇳 Tunisia",        away:"🇯🇵 Japan",           utc:Date.UTC(2026,5,21,4,0),   round:"Round 2" }, // 12am ET Jun 21
+  { id:34, group:"F", home:"🇳🇱 Netherlands",   away:"🇸🇪 Sweden",          utc:Date.UTC(2026,5,20,17,0),  round:"Round 2" }, // 1pm ET
+  { id:35, group:"F", home:"🇯🇵 Japan",          away:"🇸🇪 Sweden",          utc:Date.UTC(2026,5,25,23,0),  round:"Round 3" }, // 7pm ET
+  { id:36, group:"F", home:"🇹🇳 Tunisia",        away:"🇳🇱 Netherlands",    utc:Date.UTC(2026,5,25,23,0),  round:"Round 3" }, // 7pm ET
+  // GROUP G
+  { id:37, group:"G", home:"🇧🇪 Belgium",        away:"🇪🇬 Egypt",           utc:Date.UTC(2026,5,15,19,0),  round:"Round 1" }, // 3pm ET
+  { id:38, group:"G", home:"🇮🇷 IR Iran",        away:"🇳🇿 New Zealand",    utc:Date.UTC(2026,5,16,1,0),   round:"Round 1" }, // 9pm ET Jun 15
+  { id:39, group:"G", home:"🇧🇪 Belgium",        away:"🇮🇷 IR Iran",         utc:Date.UTC(2026,5,21,19,0),  round:"Round 2" }, // 3pm ET
+  { id:40, group:"G", home:"🇳🇿 New Zealand",   away:"🇪🇬 Egypt",           utc:Date.UTC(2026,5,22,1,0),   round:"Round 2" }, // 9pm ET Jun 21
+  { id:41, group:"G", home:"🇪🇬 Egypt",          away:"🇮🇷 IR Iran",         utc:Date.UTC(2026,5,27,1,0),   round:"Round 3" }, // 9pm ET Jun 26 - WAIT confirmed below
+  { id:42, group:"G", home:"🇳🇿 New Zealand",   away:"🇧🇪 Belgium",         utc:Date.UTC(2026,5,27,1,0),   round:"Round 3" }, // 9pm ET Jun 26
+  // GROUP H
+  { id:43, group:"H", home:"🇪🇸 Spain",          away:"🇨🇻 Cabo Verde",      utc:Date.UTC(2026,5,15,16,0),  round:"Round 1" }, // 12pm ET
+  { id:44, group:"H", home:"🇸🇦 Saudi Arabia",  away:"🇺🇾 Uruguay",         utc:Date.UTC(2026,5,15,22,0),  round:"Round 1" }, // 6pm ET
+  { id:45, group:"H", home:"🇪🇸 Spain",          away:"🇸🇦 Saudi Arabia",   utc:Date.UTC(2026,5,21,16,0),  round:"Round 2" }, // 12pm ET
+  { id:46, group:"H", home:"🇺🇾 Uruguay",        away:"🇨🇻 Cabo Verde",      utc:Date.UTC(2026,5,21,22,0),  round:"Round 2" }, // 6pm ET
+  { id:47, group:"H", home:"🇨🇻 Cabo Verde",     away:"🇸🇦 Saudi Arabia",   utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // 11pm ET Jun 26 - need to check
+  { id:48, group:"H", home:"🇺🇾 Uruguay",        away:"🇪🇸 Spain",           utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // 11pm ET Jun 26
+  // GROUP I
+  { id:49, group:"I", home:"🇫🇷 France",         away:"🇸🇳 Senegal",         utc:Date.UTC(2026,5,16,19,0),  round:"Round 1" }, // 3pm ET
+  { id:50, group:"I", home:"🇮🇶 Iraq",           away:"🇳🇴 Norway",          utc:Date.UTC(2026,5,16,22,0),  round:"Round 1" }, // 6pm ET
+  { id:51, group:"I", home:"🇫🇷 France",         away:"🇮🇶 Iraq",            utc:Date.UTC(2026,5,22,21,0),  round:"Round 2" }, // 5pm ET
+  { id:52, group:"I", home:"🇳🇴 Norway",         away:"🇸🇳 Senegal",         utc:Date.UTC(2026,5,23,0,0),   round:"Round 2" }, // 8pm ET Jun 22
+  { id:53, group:"I", home:"🇳🇴 Norway",         away:"🇫🇷 France",          utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // TBD
+  { id:54, group:"I", home:"🇸🇳 Senegal",        away:"🇮🇶 Iraq",            utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // TBD
+  // GROUP J
+  { id:55, group:"J", home:"🇦🇹 Austria",        away:"🇯🇴 Jordan",          utc:Date.UTC(2026,5,17,4,0),   round:"Round 1" }, // 12am ET Jun 17
+  { id:56, group:"J", home:"🇦🇷 Argentina",      away:"🇩🇿 Algeria",         utc:Date.UTC(2026,5,17,1,0),   round:"Round 1" }, // 9pm ET Jun 16
+  { id:57, group:"J", home:"🇦🇷 Argentina",      away:"🇦🇹 Austria",         utc:Date.UTC(2026,5,22,17,0),  round:"Round 2" }, // 1pm ET
+  { id:58, group:"J", home:"🇯🇴 Jordan",         away:"🇩🇿 Algeria",         utc:Date.UTC(2026,5,23,3,0),   round:"Round 2" }, // 11pm ET Jun 22
+  { id:59, group:"J", home:"🇩🇿 Algeria",        away:"🇦🇹 Austria",         utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // TBD
+  { id:60, group:"J", home:"🇯🇴 Jordan",         away:"🇦🇷 Argentina",       utc:Date.UTC(2026,5,27,3,0),   round:"Round 3" }, // TBD
+  // GROUP K
+  { id:61, group:"K", home:"🇵🇹 Portugal",       away:"🇨🇩 Congo DR",        utc:Date.UTC(2026,5,17,17,0),  round:"Round 1" }, // 1pm ET
+  { id:62, group:"K", home:"🇺🇿 Uzbekistan",     away:"🇨🇴 Colombia",        utc:Date.UTC(2026,5,18,2,0),   round:"Round 1" }, // 10pm ET Jun 17
+  { id:63, group:"K", home:"🇵🇹 Portugal",       away:"🇺🇿 Uzbekistan",      utc:Date.UTC(2026,5,23,17,0),  round:"Round 2" }, // 1pm ET
+  { id:64, group:"K", home:"🇨🇴 Colombia",       away:"🇨🇩 Congo DR",        utc:Date.UTC(2026,5,24,2,0),   round:"Round 2" }, // 10pm ET Jun 23
+  { id:65, group:"K", home:"🇨🇴 Colombia",       away:"🇵🇹 Portugal",        utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" }, // TBD
+  { id:66, group:"K", home:"🇨🇩 Congo DR",       away:"🇺🇿 Uzbekistan",      utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" }, // TBD
+  // GROUP L
+  { id:67, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",     away:"🇭🇷 Croatia",         utc:Date.UTC(2026,5,17,20,0),  round:"Round 1" }, // 4pm ET
+  { id:68, group:"L", home:"🇬🇭 Ghana",          away:"🇵🇦 Panama",          utc:Date.UTC(2026,5,17,23,0),  round:"Round 1" }, // 7pm ET
+  { id:69, group:"L", home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",     away:"🇬🇭 Ghana",           utc:Date.UTC(2026,5,23,20,0),  round:"Round 2" }, // 4pm ET
+  { id:70, group:"L", home:"🇵🇦 Panama",         away:"🇭🇷 Croatia",         utc:Date.UTC(2026,5,23,23,0),  round:"Round 2" }, // 7pm ET
+  { id:71, group:"L", home:"🇵🇦 Panama",         away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",       utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" }, // TBD
+  { id:72, group:"L", home:"🇭🇷 Croatia",        away:"🇬🇭 Ghana",           utc:Date.UTC(2026,5,27,22,0),  round:"Round 3" }, // TBD
   // ROUND OF 32 (28 Jun - 4 Jul)
-  { id:73,  group:null, home:"2nd A", away:"2nd B",          utc:Date.UTC(2026,5,28,19,0),  round:"Round of 32" },
-  { id:74,  group:null, home:"1st C", away:"2nd F",          utc:Date.UTC(2026,5,29,17,0),  round:"Round of 32" },
-  { id:75,  group:null, home:"1st E", away:"3rd A/B/C/D/F",  utc:Date.UTC(2026,5,29,20,30), round:"Round of 32" },
-  { id:76,  group:null, home:"1st F", away:"2nd C",          utc:Date.UTC(2026,5,30,1,0),   round:"Round of 32" },
-  { id:77,  group:null, home:"2nd E", away:"2nd I",          utc:Date.UTC(2026,5,30,17,0),  round:"Round of 32" },
-  { id:78,  group:null, home:"1st I", away:"3rd C/D/F/G/H",  utc:Date.UTC(2026,5,30,21,0),  round:"Round of 32" },
-  { id:79,  group:null, home:"1st A", away:"3rd C/E/F/H/I",  utc:Date.UTC(2026,6,1,1,0),   round:"Round of 32" },
-  { id:80,  group:null, home:"1st L", away:"3rd E/H/I/J/K",  utc:Date.UTC(2026,6,1,16,0),  round:"Round of 32" },
-  { id:81,  group:null, home:"1st G", away:"3rd A/E/H/I/J",  utc:Date.UTC(2026,6,1,20,0),  round:"Round of 32" },
-  { id:82,  group:null, home:"1st D", away:"3rd B/E/F/I/J",  utc:Date.UTC(2026,6,2,0,0),   round:"Round of 32" },
-  { id:83,  group:null, home:"1st H", away:"2nd J",          utc:Date.UTC(2026,6,2,19,0),  round:"Round of 32" },
-  { id:84,  group:null, home:"2nd K", away:"2nd L",          utc:Date.UTC(2026,6,2,23,0),  round:"Round of 32" },
-  { id:85,  group:null, home:"1st B", away:"3rd E/F/G/I/J",  utc:Date.UTC(2026,6,3,3,0),   round:"Round of 32" },
-  { id:86,  group:null, home:"2nd D", away:"2nd G",          utc:Date.UTC(2026,6,3,18,0),  round:"Round of 32" },
-  { id:87,  group:null, home:"1st J", away:"2nd H",          utc:Date.UTC(2026,6,3,22,0),  round:"Round of 32" },
-  { id:88,  group:null, home:"1st K", away:"3rd D/E/I/J/L",  utc:Date.UTC(2026,6,4,1,30),  round:"Round of 32" },
-  // ROUND OF 16 (4 Jul - 7 Jul)
-  { id:89,  group:null, home:"R32 W1", away:"R32 W3",  utc:Date.UTC(2026,6,4,17,0),  round:"Round of 16" },
-  { id:90,  group:null, home:"R32 W2", away:"R32 W4",  utc:Date.UTC(2026,6,4,21,0),  round:"Round of 16" },
-  { id:91,  group:null, home:"R32 W5", away:"R32 W6",  utc:Date.UTC(2026,6,5,20,0),  round:"Round of 16" },
-  { id:92,  group:null, home:"R32 W7", away:"R32 W8",  utc:Date.UTC(2026,6,6,0,0),   round:"Round of 16" },
-  { id:93,  group:null, home:"R32 W9", away:"R32 W10", utc:Date.UTC(2026,6,6,19,0),  round:"Round of 16" },
-  { id:94,  group:null, home:"R32 W11",away:"R32 W12", utc:Date.UTC(2026,6,7,0,0),   round:"Round of 16" },
-  { id:95,  group:null, home:"R32 W13",away:"R32 W14", utc:Date.UTC(2026,6,7,16,0),  round:"Round of 16" },
-  { id:96,  group:null, home:"R32 W15",away:"R32 W16", utc:Date.UTC(2026,6,7,20,0),  round:"Round of 16" },
-  // QUARTER FINALS (9-12 Jul)
-  { id:97,  group:null, home:"R16 W1", away:"R16 W2",  utc:Date.UTC(2026,6,9,20,0),  round:"Quarter Final" },
-  { id:98,  group:null, home:"R16 W3", away:"R16 W4",  utc:Date.UTC(2026,6,10,19,0), round:"Quarter Final" },
-  { id:99,  group:null, home:"R16 W5", away:"R16 W6",  utc:Date.UTC(2026,6,11,21,0), round:"Quarter Final" },
-  { id:100, group:null, home:"R16 W7", away:"R16 W8",  utc:Date.UTC(2026,6,12,1,0),  round:"Quarter Final" },
-  // SEMI FINALS (14-15 Jul)
-  { id:101, group:null, home:"QF W1",  away:"QF W2",   utc:Date.UTC(2026,6,14,19,0), round:"Semi Final" },
-  { id:102, group:null, home:"QF W3",  away:"QF W4",   utc:Date.UTC(2026,6,15,19,0), round:"Semi Final" },
-  // THIRD PLACE (18 Jul)
-  { id:103, group:null, home:"SF L1",  away:"SF L2",   utc:Date.UTC(2026,6,18,21,0), round:"3rd Place" },
-  // FINAL (19 Jul)
-  { id:104, group:null, home:"SF W1",  away:"SF W2",   utc:Date.UTC(2026,6,19,19,0), round:"🏆 Final" },
+  { id:73,  group:null, home:"2nd A",            away:"2nd B",          utc:Date.UTC(2026,5,29,0,0),   round:"Round of 32" }, // 8pm ET Jun 28
+  { id:74,  group:null, home:"1st C",            away:"2nd F",          utc:Date.UTC(2026,5,29,22,0),  round:"Round of 32" }, // 6pm ET
+  { id:75,  group:null, home:"1st E",            away:"3rd A/B/C/D/F",  utc:Date.UTC(2026,5,30,1,30),  round:"Round of 32" }, // 9:30pm ET Jun 29
+  { id:76,  group:null, home:"1st F",            away:"2nd C",          utc:Date.UTC(2026,5,30,6,0),   round:"Round of 32" }, // 2am ET Jun 30
+  { id:77,  group:null, home:"2nd E",            away:"2nd I",          utc:Date.UTC(2026,5,30,22,0),  round:"Round of 32" }, // 6pm ET
+  { id:78,  group:null, home:"1st I",            away:"3rd C/D/F/G/H",  utc:Date.UTC(2026,6,1,2,0),   round:"Round of 32" }, // 10pm ET Jun 30
+  { id:79,  group:null, home:"1st A",            away:"3rd C/E/F/H/I",  utc:Date.UTC(2026,6,1,5,0),   round:"Round of 32" }, // 1am ET Jul 1
+  { id:80,  group:null, home:"1st L",            away:"3rd E/H/I/J/K",  utc:Date.UTC(2026,6,1,21,0),  round:"Round of 32" }, // 5pm ET
+  { id:81,  group:null, home:"1st G",            away:"3rd A/E/H/I/J",  utc:Date.UTC(2026,6,2,1,0),   round:"Round of 32" }, // 9pm ET Jul 1
+  { id:82,  group:null, home:"1st D",            away:"3rd B/E/F/I/J",  utc:Date.UTC(2026,6,2,5,0),   round:"Round of 32" }, // 1am ET Jul 2
+  { id:83,  group:null, home:"1st H",            away:"2nd J",          utc:Date.UTC(2026,6,3,0,0),   round:"Round of 32" }, // 8pm ET Jul 2
+  { id:84,  group:null, home:"2nd K",            away:"2nd L",          utc:Date.UTC(2026,6,3,4,0),   round:"Round of 32" }, // 12am ET Jul 3
+  { id:85,  group:null, home:"1st B",            away:"3rd E/F/G/I/J",  utc:Date.UTC(2026,6,3,7,0),   round:"Round of 32" }, // 3am ET Jul 3
+  { id:86,  group:null, home:"2nd D",            away:"2nd G",          utc:Date.UTC(2026,6,3,23,0),  round:"Round of 32" }, // 7pm ET
+  { id:87,  group:null, home:"1st J",            away:"2nd H",          utc:Date.UTC(2026,6,4,3,0),   round:"Round of 32" }, // 11pm ET Jul 3
+  { id:88,  group:null, home:"1st K",            away:"3rd D/E/I/J/L",  utc:Date.UTC(2026,6,4,5,30),  round:"Round of 32" }, // 1:30am ET Jul 4
+  // ROUND OF 16
+  { id:89,  group:null, home:"R32 W1",  away:"R32 W3",  utc:Date.UTC(2026,6,4,22,0),  round:"Round of 16" },
+  { id:90,  group:null, home:"R32 W2",  away:"R32 W4",  utc:Date.UTC(2026,6,5,2,0),   round:"Round of 16" },
+  { id:91,  group:null, home:"R32 W5",  away:"R32 W6",  utc:Date.UTC(2026,6,5,23,0),  round:"Round of 16" },
+  { id:92,  group:null, home:"R32 W7",  away:"R32 W8",  utc:Date.UTC(2026,6,6,3,0),   round:"Round of 16" },
+  { id:93,  group:null, home:"R32 W9",  away:"R32 W10", utc:Date.UTC(2026,6,6,22,0),  round:"Round of 16" },
+  { id:94,  group:null, home:"R32 W11", away:"R32 W12", utc:Date.UTC(2026,6,7,2,0),   round:"Round of 16" },
+  { id:95,  group:null, home:"R32 W13", away:"R32 W14", utc:Date.UTC(2026,6,7,21,0),  round:"Round of 16" },
+  { id:96,  group:null, home:"R32 W15", away:"R32 W16", utc:Date.UTC(2026,6,8,1,0),   round:"Round of 16" },
+  // QUARTER FINALS
+  { id:97,  group:null, home:"R16 W1",  away:"R16 W2",  utc:Date.UTC(2026,6,10,0,0),  round:"Quarter Final" },
+  { id:98,  group:null, home:"R16 W3",  away:"R16 W4",  utc:Date.UTC(2026,6,10,23,0), round:"Quarter Final" },
+  { id:99,  group:null, home:"R16 W5",  away:"R16 W6",  utc:Date.UTC(2026,6,12,0,0),  round:"Quarter Final" },
+  { id:100, group:null, home:"R16 W7",  away:"R16 W8",  utc:Date.UTC(2026,6,12,23,0), round:"Quarter Final" },
+  // SEMI FINALS
+  { id:101, group:null, home:"QF W1",   away:"QF W2",   utc:Date.UTC(2026,6,15,0,0),  round:"Semi Final" },
+  { id:102, group:null, home:"QF W3",   away:"QF W4",   utc:Date.UTC(2026,6,16,0,0),  round:"Semi Final" },
+  // THIRD PLACE
+  { id:103, group:null, home:"SF L1",   away:"SF L2",   utc:Date.UTC(2026,6,19,1,0),  round:"3rd Place" },
+  // FINAL
+  { id:104, group:null, home:"SF W1",   away:"SF W2",   utc:Date.UTC(2026,6,19,19,0), round:"🏆 Final" },
 ];
 
 const GROUPS = ["A","B","C","D","E","F","G","H","I","J","K","L"];

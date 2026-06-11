@@ -580,9 +580,25 @@ export default function App() {
     const isKO=tab==="KO", isToday=tab==="TODAY";
     const todayMs=MATCHES_DATA.filter(m=>{
       const zone=TZ_ZONES[tz];
-      const ls=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(m.utc));
-      const ts=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-      return ls===ts;
+      const now=new Date();
+      // Get start of today in user's timezone (midnight)
+      const todayStr=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
+      const [y,mo,d]=todayStr.split("-").map(Number);
+      // Start of today in UTC
+      const startOfToday=new Date(`${y}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}T00:00:00`);
+      const startUTC=startOfToday.getTime()-new Date(startOfToday.toLocaleString("en-US",{timeZone:zone})).getTime()+startOfToday.getTime();
+      // Window: midnight today to 6am next day (30hr window)
+      const windowStart=new Date(now);
+      windowStart.setHours(0,0,0,0);
+      // Convert to UTC properly using timezone
+      const todayMidnightLocal=new Date(new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(now)+"T00:00:00");
+      const offset=todayMidnightLocal.getTime()-new Date(new Intl.DateTimeFormat("en-US",{timeZone:"UTC",year:"numeric",month:"2-digit",day:"2-digit"}).format(todayMidnightLocal)+"T00:00:00").getTime();
+      // Simpler approach: match is "today" if its local date is today OR if it's within 6 hours after midnight tonight
+      const matchLocalDate=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(m.utc));
+      const matchLocalHour=parseInt(new Intl.DateTimeFormat("en-GB",{timeZone:zone,hour:"2-digit",hour12:false}).format(new Date(m.utc)));
+      const tomorrowStr=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(now.getTime()+24*60*60*1000));
+      // Show if: same day OR (next calendar day AND kicks off before 06:00 local)
+      return matchLocalDate===todayStr || (matchLocalDate===tomorrowStr && matchLocalHour<6);
     });
     const ms=isToday?todayMs:isKO?MATCHES_DATA.filter(m=>!m.group):MATCHES_DATA.filter(m=>m.group===tab);
     const rounds={};ms.forEach(m=>{if(!rounds[m.round])rounds[m.round]=[];rounds[m.round].push(m);});

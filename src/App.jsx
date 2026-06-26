@@ -170,10 +170,15 @@ const calcPoints=(pred,actual)=>{
   if(!actual||!pred||pred.home===""||pred.away==="")return 0;
   const ph=parseInt(pred.home),pa=parseInt(pred.away),ah=parseInt(actual.home),aa=parseInt(actual.away);
   if(isNaN(ph)||isNaN(pa))return 0;
-  if(ph===ah&&pa===aa)return 5;
-  const pr=ph>pa?"H":ph<pa?"A":"D",ar=ah>aa?"H":ah<aa?"A":"D";
-  if(pr===ar)return 3;
-  return 0;
+  let pt=0;
+  if(ph===ah&&pa===aa)pt=5;
+  else{
+    const pr=ph>pa?"H":ph<pa?"A":"D",ar=ah>aa?"H":ah<aa?"A":"D";
+    pt=pr===ar?3:0;
+  }
+  // Knockout draws: +3 if the player also called the extra-time winner correctly
+  if(ph===pa&&ah===aa&&pred.aet&&actual.aetWinner&&pred.aet===actual.aetWinner)pt+=3;
+  return pt;
 };
 
 const TZ=[{key:"ET",label:"🇺🇸 ET"},{key:"UK",label:"🇬🇧 BST"},{key:"DE",label:"🇩🇪 CEST"},{key:"SA",label:"🇿🇦 SAST"}];
@@ -182,13 +187,21 @@ const WC_IMG="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA8LDA0MCg8
 
 // Get joker slot for a match
 const getJokerSlot=(m)=>{
-  if(!m.group) return "ko";
+  if(!m.group){
+    if(m.round==="Round of 32") return "r32";
+    if(m.round==="Round of 16") return "r16";
+    if(m.round==="Quarter Final") return "qf";
+    if(m.round==="Semi Final") return "sf";
+    if(m.round==="🏆 Final") return "final";
+    return null; // 3rd Place playoff has no joker
+  }
   if(m.round==="Round 1") return "r1";
   if(m.round==="Round 2") return "r2";
   if(m.round==="Round 3") return "r3";
-  return "ko";
+  return null;
 };
-const JOKER_LABELS={r1:"Round 1",r2:"Round 2",r3:"Round 3",ko:"Knockouts"};
+const JOKER_LABELS={r1:"Round 1",r2:"Round 2",r3:"Round 3",r32:"Round of 32",r16:"Round of 16",qf:"Quarter Final",sf:"Semi Final",final:"Final"};
+const JOKER_SLOTS=Object.keys(JOKER_LABELS);
 
 const Countdown=({utc,style})=>{
   const [cd,setCd]=useState(formatCountdown(utc-Date.now()));
@@ -243,7 +256,7 @@ export default function App() {
   const [name,setName]=useState(()=>localStorage.getItem("vvd_name")||"");
   const [playerId,setPlayerId]=useState(()=>localStorage.getItem("vvd_pid")||"");
   const [preds,setPreds]=useState({});
-  const [joker,setJoker]=useState({r1:null,r2:null,r3:null,ko:null}); // one joker per round group
+  const [joker,setJoker]=useState(()=>Object.fromEntries(JOKER_SLOTS.map(k=>[k,null]))); // one joker per round group
   const [allPlayers,setAllPlayers]=useState({});
   const [results,setResults]=useState({});
   const [tab,setTab]=useState("TODAY");
@@ -286,7 +299,7 @@ export default function App() {
     const u=onValue(ref(db,`players/${playerId}`),snap=>{
       const d=snap.val();
       if(d){
-        setJoker(d.jokerUsed||{r1:null,r2:null,r3:null,ko:null});
+        setJoker(d.jokerUsed||Object.fromEntries(JOKER_SLOTS.map(k=>[k,null])));
         // Only load predictions on first load, not on every Firebase update
         setPreds(prev=>{
           if(Object.keys(prev).length===0) return d.predictions||{};
@@ -347,6 +360,17 @@ export default function App() {
     if(!/^\d*$/.test(val)||parseInt(val)>20)return;
     const newPred={...localPreds[matchId],[side]:val};
     setLocalPreds(p=>({...p,[matchId]:newPred}));
+  };
+
+  const handleAetChange=(matchId,side)=>{
+    setLocalPreds(p=>({...p,[matchId]:{...p[matchId],aet:side}}));
+  };
+
+  const canSavePred=(m)=>{
+    const pred=localPreds[m.id];
+    if(!pred)return false;
+    if(!m.group&&pred.home!==""&&pred.away!==""&&pred.home===pred.away&&!pred.aet)return false;
+    return true;
   };
 
   const handlePredBlur=async(matchId)=>{
@@ -515,9 +539,16 @@ export default function App() {
           </div>
           <span style={{...s.tn,textAlign:"right"}}>{m.away}</span>
         </div>
+        {!m.group&&!lk&&pred.home!==""&&pred.away!==""&&pred.home===pred.away&&(
+          <div style={{marginTop:6,display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
+            <span style={{fontSize:10,color:"#7f8c9a",letterSpacing:1,textTransform:"uppercase"}}>AET winner (+3pts):</span>
+            <button style={{...s.tzm,...(pred.aet==="home"?s.tzma:{})}} onClick={()=>handleAetChange(m.id,"home")}>{m.home.split(" ").pop()}</button>
+            <button style={{...s.tzm,...(pred.aet==="away"?s.tzma:{})}} onClick={()=>handleAetChange(m.id,"away")}>{m.away.split(" ").pop()}</button>
+          </div>
+        )}
         {!lk&&pred.home!==""&&pred.away!==""&&<div style={{marginTop:6,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <button
-            onMouseDown={e=>{e.preventDefault();handlePredBlur(m.id);toast2("✅ Prediction saved!");}}
+            onMouseDown={e=>{e.preventDefault();if(!canSavePred(m))return toast2("Pick who wins after extra time!","error");handlePredBlur(m.id);toast2("✅ Prediction saved!");}}
             style={{background:"linear-gradient(135deg,rgba(39,174,96,0.2),rgba(39,174,96,0.1))",border:"1px solid rgba(39,174,96,0.5)",borderRadius:7,padding:"6px 16px",color:"#27ae60",fontSize:11,fontWeight:800,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase",touchAction:"manipulation"}}>
             💾 Save Prediction
           </button>
@@ -525,8 +556,8 @@ export default function App() {
             <span style={{fontSize:10,fontWeight:800,background:"rgba(39,174,96,0.15)",color:"#27ae60",padding:"3px 9px",borderRadius:20,border:"1px solid rgba(39,174,96,0.3)"}}>✅ Saved</span>
           )}
         </div>}
-        {actual&&<div style={s.rr}><span style={s.rt}>Result: {actual.home}–{actual.away}</span><span style={{...s.pp,background:pts===5?"#27ae60":pts>=1?"#e67e22":"#c0392b"}}>{isJ?`🃏 ${pts*2}pts`:`${pts}pts`}</span></div>}
-        {!lk&&<div style={s.ac}>{!slotUsed&&<button style={s.jb} onClick={()=>saveJoker(m)}>🃏 Play {JOKER_LABELS[slot]} Joker</button>}{isJ&&<div style={{display:'flex',alignItems:'center',gap:8}}><span style={s.ja}>🃏 JOKER ACTIVE — 2×</span><button style={{background:'rgba(231,76,60,0.12)',border:'1px solid rgba(231,76,60,0.4)',borderRadius:5,padding:'3px 9px',color:'#e74c3c',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}} onClick={()=>removeJoker(m)}>✕ Remove</button></div>}{slotUsed&&!isJ&&<span style={{fontSize:9,color:'#4a5568',letterSpacing:1}}>🃏 {JOKER_LABELS[slot]} joker already used on another match</span>}</div>}
+        {actual&&<div style={s.rr}><span style={s.rt}>Result: {actual.home}–{actual.away}{actual.aetWinner?` (AET: ${actual.aetWinner==="home"?m.home.split(" ").pop():m.away.split(" ").pop()})`:""}</span><span style={{...s.pp,background:pts===5?"#27ae60":pts>=1?"#e67e22":"#c0392b"}}>{isJ?`🃏 ${pts*2}pts`:`${pts}pts`}</span></div>}
+        {!lk&&slot&&<div style={s.ac}>{!slotUsed&&<button style={s.jb} onClick={()=>saveJoker(m)}>🃏 Play {JOKER_LABELS[slot]} Joker</button>}{isJ&&<div style={{display:'flex',alignItems:'center',gap:8}}><span style={s.ja}>🃏 JOKER ACTIVE — 2×</span><button style={{background:'rgba(231,76,60,0.12)',border:'1px solid rgba(231,76,60,0.4)',borderRadius:5,padding:'3px 9px',color:'#e74c3c',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}} onClick={()=>removeJoker(m)}>✕ Remove</button></div>}{slotUsed&&!isJ&&<span style={{fontSize:9,color:'#4a5568',letterSpacing:1}}>🃏 {JOKER_LABELS[slot]} joker already used on another match</span>}</div>}
       </div>
     );
   };
@@ -569,7 +600,7 @@ export default function App() {
         )}
       </div>
       <p style={s.status}>{fbReady?"🟢 Connected to live server":"🟡 Connecting..."}</p>
-      <p style={s.hint}>Exact score = 5pts · Correct result = 3pts · Joker = 2× · 48 teams · 12 groups</p>
+      <p style={s.hint}>Exact score = 5pts · Correct result = 3pts · Knockout draw + correct AET winner = +3pts · Joker = 2× (one per round, incl. each knockout round) · 48 teams · 12 groups</p>
     </div>
     {toast&&<Toast t={toast}/>}
     </div>
@@ -614,7 +645,7 @@ export default function App() {
           <button style={s.nb} onClick={()=>setView("admin")}>⚙️</button>
         </div>
       </div>
-      <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {Object.values(joker||{}).filter(Boolean).length}/4 Jokers</span></div>
+      <div style={s.pts}><span style={s.pn}>{myPts}</span><span style={s.pt}>MY POINTS</span><span style={s.jt}>🃏 {Object.values(joker||{}).filter(Boolean).length}/{JOKER_SLOTS.length} Jokers</span></div>
       <div style={s.tzbar}><span style={s.tzbl}>Times:</span>{TZ.map(t=>(<button key={t.key} style={{...s.tzm,...(tz===t.key?s.tzma:{})}} onClick={()=>setTz(t.key)}>{t.label}</button>))}</div>
       <div style={s.tabs}>
         <button style={{...s.tab,...(tab==="TODAY"?s.todaytab:{})}} onClick={()=>setTab("TODAY")}>📅 Today{todayMs.length>0?` (${todayMs.length})`:""}</button>
@@ -748,10 +779,14 @@ export default function App() {
     const isKO=atab==="KO";
     const am=isKO?MATCHES_DATA.filter(m=>!m.group):MATCHES_DATA.filter(m=>m.group===atab);
     const rounds={};am.forEach(m=>{if(!rounds[m.round])rounds[m.round]=[];rounds[m.round].push(m);});
-    const saveResult=async(matchId)=>{
+    const saveResult=async(m)=>{
+      const matchId=m.id;
       const inp=ainputs[matchId];
       if(!inp||inp.home===""||inp.away==="")return toast2("Enter both scores!","error");
-      await set(ref(db,`results/${matchId}`),{home:inp.home,away:inp.away});
+      if(!m.group&&inp.home===inp.away&&!inp.aetWinner)return toast2("Pick the extra-time winner!","error");
+      const payload={home:inp.home,away:inp.away};
+      if(!m.group&&inp.home===inp.away)payload.aetWinner=inp.aetWinner;
+      await set(ref(db,`results/${matchId}`),payload);
       toast2("✅ Result saved — leaderboard updated live!");
     };
     const clearResult=async(matchId)=>{
@@ -798,10 +833,10 @@ export default function App() {
         <div key={round}><div style={s.rh}>{round}</div>
         {rm.map(m=>{
           const ex=results[m.id];
-          const inp=ainputs[m.id]||{home:ex?.home||"",away:ex?.away||""};
+          const inp=ainputs[m.id]||{home:ex?.home||"",away:ex?.away||"",aetWinner:ex?.aetWinner||""};
           return(
             <div key={m.id} style={{...s.mc,...(ex?{border:"1px solid rgba(39,174,96,0.4)",background:"rgba(39,174,96,0.05)"}:{})}}>
-              <div style={s.mm}><span style={s.db}>📅 {getDateLabel(m.utc,"ET")} · ⏱ {formatKickoff(m.utc,"ET")}</span>{ex&&<span style={s.fb}>✅ {ex.home}–{ex.away}</span>}</div>
+              <div style={s.mm}><span style={s.db}>📅 {getDateLabel(m.utc,"ET")} · ⏱ {formatKickoff(m.utc,"ET")}</span>{ex&&<span style={s.fb}>✅ {ex.home}–{ex.away}{ex.aetWinner?` (AET: ${ex.aetWinner==="home"?m.home.split(" ").pop():m.away.split(" ").pop()})`:""}</span>}</div>
               <div style={s.mr}>
                 <span style={{...s.tn,fontSize:11}}>{m.home}</span>
                 <div style={s.sb}>
@@ -811,8 +846,15 @@ export default function App() {
                 </div>
                 <span style={{...s.tn,textAlign:"right",fontSize:11}}>{m.away}</span>
               </div>
+              {!m.group&&inp.home!==""&&inp.away!==""&&inp.home===inp.away&&(
+                <div style={{display:"flex",gap:6,marginTop:7,alignItems:"center"}}>
+                  <span style={{fontSize:10,color:"#7f8c9a",letterSpacing:1,textTransform:"uppercase"}}>AET winner:</span>
+                  <button style={{...s.tzm,...(inp.aetWinner==="home"?s.tzma:{})}} onClick={()=>setAinputs(a=>({...a,[m.id]:{...inp,aetWinner:"home"}}))}>{m.home.split(" ").pop()}</button>
+                  <button style={{...s.tzm,...(inp.aetWinner==="away"?s.tzma:{})}} onClick={()=>setAinputs(a=>({...a,[m.id]:{...inp,aetWinner:"away"}}))}>{m.away.split(" ").pop()}</button>
+                </div>
+              )}
               <div style={{display:"flex",gap:7,marginTop:7}}>
-                <button style={s.sv} onClick={()=>saveResult(m.id)}>💾 Save Result</button>
+                <button style={s.sv} onClick={()=>saveResult(m)}>💾 Save Result</button>
                 {ex&&<button style={s.cl} onClick={()=>clearResult(m.id)}>✕</button>}
               </div>
             </div>

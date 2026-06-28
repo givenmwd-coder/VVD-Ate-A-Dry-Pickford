@@ -105,20 +105,20 @@ const MATCHES_DATA = [
   // ROUND OF 32 (28 Jun - 4 Jul)
   { id:73,  group:null, home:"🇿🇦 South Africa", away:"🇨🇦 Canada",      utc:Date.UTC(2026,5,28,19,0),  round:"Round of 32" }, // 3pm ET
   { id:74,  group:null, home:"🇧🇷 Brazil",       away:"🇯🇵 Japan",        utc:Date.UTC(2026,5,29,17,0),  round:"Round of 32" }, // 1pm ET
-  { id:75,  group:null, home:"🇩🇪 Germany",      away:"3rd C/D/F",        utc:Date.UTC(2026,5,29,20,30), round:"Round of 32" }, // 4:30pm ET
+  { id:75,  group:null, home:"🇩🇪 Germany",      away:"🇵🇾 Paraguay",     utc:Date.UTC(2026,5,29,20,30), round:"Round of 32" }, // 4:30pm ET
   { id:76,  group:null, home:"🇳🇱 Netherlands",  away:"🇲🇦 Morocco",      utc:Date.UTC(2026,5,30,1,0),   round:"Round of 32" }, // 9pm ET Jun 29
-  { id:77,  group:null, home:"🇨🇮 Côte d'Ivoire",away:"2nd I",            utc:Date.UTC(2026,5,30,17,0),  round:"Round of 32" }, // 1pm ET
-  { id:78,  group:null, home:"1st I",            away:"3rd D/F/G",        utc:Date.UTC(2026,5,30,21,0),  round:"Round of 32" }, // 5pm ET
-  { id:79,  group:null, home:"🇲🇽 Mexico",       away:"3rd C/E/H",        utc:Date.UTC(2026,6,1,1,0),   round:"Round of 32" }, // 9pm ET Jun 30
-  { id:80,  group:null, home:"1st L",            away:"3rd E/I/J/K",      utc:Date.UTC(2026,6,1,16,0),  round:"Round of 32" }, // 12pm ET
-  { id:81,  group:null, home:"1st G",            away:"3rd A/H/I/J",      utc:Date.UTC(2026,6,1,20,0),  round:"Round of 32" }, // 4pm ET
+  { id:77,  group:null, home:"🇨🇮 Côte d'Ivoire",away:"🇳🇴 Norway",       utc:Date.UTC(2026,5,30,17,0),  round:"Round of 32" }, // 1pm ET
+  { id:78,  group:null, home:"🇫🇷 France",       away:"🇸🇪 Sweden",       utc:Date.UTC(2026,5,30,21,0),  round:"Round of 32" }, // 5pm ET
+  { id:79,  group:null, home:"🇲🇽 Mexico",       away:"🇪🇨 Ecuador",      utc:Date.UTC(2026,6,1,1,0),   round:"Round of 32" }, // 9pm ET Jun 30
+  { id:80,  group:null, home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",   away:"🇨🇩 Congo DR",     utc:Date.UTC(2026,6,1,16,0),  round:"Round of 32" }, // 12pm ET
+  { id:81,  group:null, home:"🇧🇪 Belgium",      away:"🇸🇳 Senegal",      utc:Date.UTC(2026,6,1,20,0),  round:"Round of 32" }, // 4pm ET
   { id:82,  group:null, home:"🇺🇸 USA",          away:"🇧🇦 Bosnia-Herz.", utc:Date.UTC(2026,6,2,0,0),   round:"Round of 32" }, // 8pm ET Jul 1
-  { id:83,  group:null, home:"1st H",            away:"2nd J",          utc:Date.UTC(2026,6,2,19,0),  round:"Round of 32" }, // 3pm ET
-  { id:84,  group:null, home:"2nd K",            away:"2nd L",          utc:Date.UTC(2026,6,2,23,0),  round:"Round of 32" }, // 7pm ET
-  { id:85,  group:null, home:"🇨🇭 Switzerland",  away:"3rd E/F/G/I/J",    utc:Date.UTC(2026,6,3,3,0),   round:"Round of 32" }, // 11pm ET Jul 2
-  { id:86,  group:null, home:"🇦🇺 Australia",    away:"2nd G",            utc:Date.UTC(2026,6,3,18,0),  round:"Round of 32" }, // 2pm ET
-  { id:87,  group:null, home:"🇦🇷 Argentina",    away:"2nd H",            utc:Date.UTC(2026,6,3,22,0),  round:"Round of 32" }, // 6pm ET
-  { id:88,  group:null, home:"1st K",            away:"3rd D/E/I/J/L",  utc:Date.UTC(2026,6,4,1,30),  round:"Round of 32" }, // 9:30pm ET Jul 3
+  { id:83,  group:null, home:"🇪🇸 Spain",        away:"🇦🇹 Austria",      utc:Date.UTC(2026,6,2,19,0),  round:"Round of 32" }, // 3pm ET
+  { id:84,  group:null, home:"🇵🇹 Portugal",     away:"🇭🇷 Croatia",      utc:Date.UTC(2026,6,2,23,0),  round:"Round of 32" }, // 7pm ET
+  { id:85,  group:null, home:"🇨🇭 Switzerland",  away:"🇩🇿 Algeria",      utc:Date.UTC(2026,6,3,3,0),   round:"Round of 32" }, // 11pm ET Jul 2
+  { id:86,  group:null, home:"🇦🇺 Australia",    away:"🇪🇬 Egypt",        utc:Date.UTC(2026,6,3,18,0),  round:"Round of 32" }, // 2pm ET
+  { id:87,  group:null, home:"🇦🇷 Argentina",    away:"🇨🇻 Cabo Verde",   utc:Date.UTC(2026,6,3,22,0),  round:"Round of 32" }, // 6pm ET
+  { id:88,  group:null, home:"🇨🇴 Colombia",     away:"🇬🇭 Ghana",        utc:Date.UTC(2026,6,4,1,30),  round:"Round of 32" }, // 9:30pm ET Jul 3
   // ROUND OF 16
   { id:89,  group:null, home:"R32 W1",  away:"R32 W4",  utc:Date.UTC(2026,6,4,17,0),  round:"Round of 16" },
   { id:90,  group:null, home:"R32 W3",  away:"R32 W6",  utc:Date.UTC(2026,6,4,21,0),  round:"Round of 16" },

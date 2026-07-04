@@ -120,14 +120,14 @@ const MATCHES_DATA = [
   { id:87,  group:null, home:"🇦🇷 Argentina",    away:"🇨🇻 Cabo Verde",   utc:Date.UTC(2026,6,3,22,0),  round:"Round of 32" }, // 6pm ET
   { id:88,  group:null, home:"🇨🇴 Colombia",     away:"🇬🇭 Ghana",        utc:Date.UTC(2026,6,4,1,30),  round:"Round of 32" }, // 9:30pm ET Jul 3
   // ROUND OF 16
-  { id:89,  group:null, home:"R32 W1",  away:"R32 W4",  utc:Date.UTC(2026,6,4,17,0),  round:"Round of 16" },
-  { id:90,  group:null, home:"R32 W3",  away:"R32 W6",  utc:Date.UTC(2026,6,4,21,0),  round:"Round of 16" },
-  { id:91,  group:null, home:"R32 W2",  away:"R32 W5",  utc:Date.UTC(2026,6,5,20,0),  round:"Round of 16" },
-  { id:92,  group:null, home:"R32 W7",  away:"R32 W8",  utc:Date.UTC(2026,6,6,0,0),   round:"Round of 16" },
-  { id:93,  group:null, home:"R32 W11", away:"R32 W12", utc:Date.UTC(2026,6,6,19,0),  round:"Round of 16" },
-  { id:94,  group:null, home:"R32 W9",  away:"R32 W10", utc:Date.UTC(2026,6,7,0,0),   round:"Round of 16" },
-  { id:95,  group:null, home:"R32 W14", away:"R32 W15", utc:Date.UTC(2026,6,7,16,0),  round:"Round of 16" },
-  { id:96,  group:null, home:"R32 W13", away:"R32 W16", utc:Date.UTC(2026,6,7,20,0),  round:"Round of 16" },
+  { id:89,  group:null, home:"🇨🇦 Canada",       away:"🇲🇦 Morocco",  utc:Date.UTC(2026,6,4,17,0),  round:"Round of 16" }, // 1pm ET Houston
+  { id:90,  group:null, home:"🇵🇾 Paraguay",     away:"🇫🇷 France",   utc:Date.UTC(2026,6,4,21,0),  round:"Round of 16" }, // 5pm ET Philadelphia
+  { id:91,  group:null, home:"🇧🇷 Brazil",       away:"🇳🇴 Norway",   utc:Date.UTC(2026,6,5,20,0),  round:"Round of 16" }, // 4pm ET East Rutherford
+  { id:92,  group:null, home:"🇲🇽 Mexico",       away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", utc:Date.UTC(2026,6,6,0,0),   round:"Round of 16" }, // 8pm ET Mexico City
+  { id:93,  group:null, home:"🇵🇹 Portugal",     away:"🇪🇸 Spain",    utc:Date.UTC(2026,6,6,19,0),  round:"Round of 16" }, // 3pm ET Arlington
+  { id:94,  group:null, home:"🇺🇸 USA",          away:"🇧🇪 Belgium",  utc:Date.UTC(2026,6,7,0,0),   round:"Round of 16" }, // 8pm ET Seattle
+  { id:95,  group:null, home:"🇦🇷 Argentina",    away:"🇪🇬 Egypt",    utc:Date.UTC(2026,6,7,16,0),  round:"Round of 16" }, // 12pm ET Atlanta
+  { id:96,  group:null, home:"🇨🇭 Switzerland",  away:"🇨🇴 Colombia", utc:Date.UTC(2026,6,7,20,0),  round:"Round of 16" }, // 4pm ET Vancouver
   // QUARTER FINALS
   { id:97,  group:null, home:"R16 W1",  away:"R16 W2",  utc:Date.UTC(2026,6,9,20,0),  round:"Quarter Final" },
   { id:98,  group:null, home:"R16 W3",  away:"R16 W4",  utc:Date.UTC(2026,6,11,21,0), round:"Quarter Final" },

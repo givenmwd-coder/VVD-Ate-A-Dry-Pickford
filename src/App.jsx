@@ -129,10 +129,10 @@ const MATCHES_DATA = [
   { id:95,  group:null, home:"🇦🇷 Argentina",    away:"🇪🇬 Egypt",    utc:Date.UTC(2026,6,7,16,0),  round:"Round of 16" }, // 12pm ET Atlanta
   { id:96,  group:null, home:"🇨🇭 Switzerland",  away:"🇨🇴 Colombia", utc:Date.UTC(2026,6,7,20,0),  round:"Round of 16" }, // 4pm ET Vancouver
   // QUARTER FINALS
-  { id:97,  group:null, home:"R16 W1",  away:"R16 W2",  utc:Date.UTC(2026,6,9,20,0),  round:"Quarter Final" },
-  { id:98,  group:null, home:"R16 W3",  away:"R16 W4",  utc:Date.UTC(2026,6,11,21,0), round:"Quarter Final" },
-  { id:99,  group:null, home:"R16 W5",  away:"R16 W6",  utc:Date.UTC(2026,6,10,19,0), round:"Quarter Final" },
-  { id:100, group:null, home:"R16 W7",  away:"R16 W8",  utc:Date.UTC(2026,6,12,1,0),  round:"Quarter Final" },
+  { id:97,  group:null, home:"🇫🇷 France",       away:"🇲🇦 Morocco",     utc:Date.UTC(2026,6,9,20,0),  round:"Quarter Final" }, // 4pm ET Boston
+  { id:98,  group:null, home:"🇳🇴 Norway",        away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", utc:Date.UTC(2026,6,11,21,0), round:"Quarter Final" }, // 5pm ET Miami
+  { id:99,  group:null, home:"🇪🇸 Spain",         away:"🇧🇪 Belgium",     utc:Date.UTC(2026,6,10,19,0), round:"Quarter Final" }, // 3pm ET LA
+  { id:100, group:null, home:"🇦🇷 Argentina",     away:"🇨🇭 Switzerland", utc:Date.UTC(2026,6,12,1,0),  round:"Quarter Final" }, // 9pm ET Jul11 Kansas City
   // SEMI FINALS
   { id:101, group:null, home:"QF W1",   away:"QF W2",   utc:Date.UTC(2026,6,14,19,0), round:"Semi Final" },
   { id:102, group:null, home:"QF W3",   away:"QF W4",   utc:Date.UTC(2026,6,15,19,0), round:"Semi Final" },

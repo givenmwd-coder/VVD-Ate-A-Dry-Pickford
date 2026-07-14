@@ -134,8 +134,8 @@ const MATCHES_DATA = [
   { id:99,  group:null, home:"🇪🇸 Spain",         away:"🇧🇪 Belgium",     utc:Date.UTC(2026,6,10,19,0), round:"Quarter Final" }, // 3pm ET LA
   { id:100, group:null, home:"🇦🇷 Argentina",     away:"🇨🇭 Switzerland", utc:Date.UTC(2026,6,12,1,0),  round:"Quarter Final" }, // 9pm ET Jul11 Kansas City
   // SEMI FINALS
-  { id:101, group:null, home:"🇦🇷 Argentina", away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",   utc:Date.UTC(2026,6,14,19,0), round:"Semi Final" },
-  { id:102, group:null, home:"🇪🇸 Spain",     away:"🇫🇷 France",     utc:Date.UTC(2026,6,15,19,0), round:"Semi Final" },
+  { id:101, group:null, home:"🇦🇷 Argentina", away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",   utc:Date.UTC(2026,6,14,19,0), round:"Semi Final" }, // 21:00 CEST Berlin
+  { id:102, group:null, home:"🇪🇸 Spain",     away:"🇫🇷 France",     utc:Date.UTC(2026,6,15,19,0), round:"Semi Final" }, // 21:00 CEST Berlin
   // THIRD PLACE
   { id:103, group:null, home:"SF L1",   away:"SF L2",   utc:Date.UTC(2026,6,18,21,0), round:"3rd Place" },
   // FINAL

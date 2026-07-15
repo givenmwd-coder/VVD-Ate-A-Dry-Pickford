@@ -137,9 +137,9 @@ const MATCHES_DATA = [
   { id:101, group:null, home:"🇫🇷 France",     away:"🇪🇸 Spain",       utc:Date.UTC(2026,6,14,19,0), round:"Semi Final" }, // 3pm ET Dallas
   { id:102, group:null, home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England", away:"🇦🇷 Argentina",  utc:Date.UTC(2026,6,15,19,0), round:"Semi Final" }, // 3pm ET Atlanta
   // THIRD PLACE
-  { id:103, group:null, home:"SF L1",   away:"SF L2",   utc:Date.UTC(2026,6,18,21,0), round:"3rd Place" },
+  { id:103, group:null, home:"🇫🇷 France",    away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 England",  utc:Date.UTC(2026,6,18,21,0), round:"3rd Place" },
   // FINAL
-  { id:104, group:null, home:"SF W1",   away:"SF W2",   utc:Date.UTC(2026,6,19,19,0), round:"🏆 Final" },
+  { id:104, group:null, home:"🇪🇸 Spain",     away:"🇦🇷 Argentina",  utc:Date.UTC(2026,6,19,19,0), round:"🏆 Final" }, // 3pm ET MetLife Stadium
 ];
 
 const GROUPS = ["A","B","C","D","E","F","G","H","I","J","K","L"];
